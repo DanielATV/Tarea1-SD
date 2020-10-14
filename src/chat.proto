@@ -1,0 +1,53 @@
+syntax = "proto3";
+package chat;
+
+message Message {
+  string body = 1;
+}
+
+message Orden {
+  string id = 1;
+  string producto = 2;
+  int32 valor = 3;
+  string origen = 4;
+  string destino = 5;
+  int32  tipo = 6;
+}
+
+message Codigo{
+
+    string idcompra = 1;
+
+}
+
+message EstOrden {
+    string estado = 1;
+
+}
+
+
+
+message Asigcam {
+    string idcam = 1;
+    string idprod = 2;
+}
+
+message Rescam{
+    string id =1;
+    int32 intentos =2;
+    string estado = 3;
+
+}
+
+service ChatService {
+  rpc SayHello(Message) returns (Message) {}
+
+  // El cliente genera una orden
+  rpc HacerPedido( Orden) returns (Codigo){}
+
+  // El cliente solicita el estado de su pedido
+  //rpc Estado( Codigo) returns (EstOrden){}
+
+  // Seguimiento de la orden
+  //rpc Seguimiento(stream Asigcam) returns (stream Rescam){}
+}
