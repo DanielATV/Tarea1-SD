@@ -18,7 +18,8 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := chat.Server{}
+	s := chat.Server{Asd: 0}
+	
 
 	grpcServer := grpc.NewServer()
 

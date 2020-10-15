@@ -4,11 +4,21 @@ import (
 	"log"
 
 	"golang.org/x/net/context"
-	"github.com/tutorialedge/go-grpc-beginners-tutorial/camion"
-	"google.golang.org/grpc"
+	"time"
+	"os"
+	"encoding/csv"
+	"strconv"
+	
 )
 
 type Server struct {
+	Asd int
+}
+
+func checkError(message string, err error) {
+    if err != nil {
+        log.Fatal(message, err)
+    }
 }
 
 func (s *Server) SayHello(ctx context.Context, in *Message) (*Message, error) {
@@ -19,19 +29,27 @@ func (s *Server) SayHello(ctx context.Context, in *Message) (*Message, error) {
 
 func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 
-	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":9001", grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("did not connect: %s", err)
-	}
-	defer conn.Close()
+	currentTime := time.Now()
+	asd := currentTime.Format("2006-01-02 15:04:05")
 
-	c := camion.NewChatServiceClient(conn)
-	response, err := c.SayHelloCamion(context.Background(), &camion.Message{Body: "Hello From logistica!"})
-	if err != nil {
-		log.Fatalf("Error when calling SayHello: %s", err)
-	}
-	log.Printf("Response from camion: %s", response.Body)
+	file, err := os.OpenFile("registroPedidos.csv", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+    checkError("Cannot create file", err)
+	defer file.Close()
+	
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+
+	s.Asd = s.Asd + 1
+	i:= strconv.Itoa(s.Asd)
+	var mensaje = []string{asd,i }
+	
+
+	//err := writer.Write({asd,in.Id,in.Tipo,in.Producto,in.Valor,in.Origen,in.Destino,0})
+	err2 := writer.Write(mensaje)
+    checkError("Cannot write to file", err2)
+
+	
 	log.Printf("El destino del pedido %s es %s",in.Id, in.Destino)
 
 
