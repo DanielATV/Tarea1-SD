@@ -42,7 +42,20 @@ func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 
 	s.Asd = s.Asd + 1
 	i:= strconv.Itoa(s.Asd)
-	var mensaje = []string{asd,i }
+	j:= strconv.Itoa(int(in.Valor))
+	
+	tipo := in.Tipo
+	var tipostr string
+
+	switch tipo {
+    case 0:
+        tipostr = "normal"
+    case 1:
+        tipostr = "prioritario"
+    case 2:
+        tipostr = "retail"
+    }
+	var mensaje = []string{asd,in.Id,tipostr,in.Producto,j,in.Origen,in.Destino,i}
 	
 
 	//err := writer.Write({asd,in.Id,in.Tipo,in.Producto,in.Valor,in.Origen,in.Destino,0})

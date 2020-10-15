@@ -37,10 +37,10 @@ func main() {
 	//Lectura de archivo
 
 	if eleccion == 0 {
-		csvReaderRow(esperar,"pyme.csv")
+		csvReaderRow(esperar,"pymes.csv",0)
 
 	} else {
-		csvReaderRow(esperar,"retail.cvs")
+		csvReaderRow(esperar,"retail.csv",1)
 
 	}
 
@@ -48,7 +48,7 @@ func main() {
 
 }
 
-func csvReaderRow(timer int,nombre string) {
+func csvReaderRow(timer int,nombre string, flag int) {
 	var conn *grpc.ClientConn
 	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
@@ -61,7 +61,7 @@ func csvReaderRow(timer int,nombre string) {
 
 
 	// Open the file
-	recordFile, err := os.Open("pymes.csv")
+	recordFile, err := os.Open(nombre)
 	if err != nil {
 		fmt.Println("An error encountered ::", err)
 		return
@@ -91,13 +91,21 @@ func csvReaderRow(timer int,nombre string) {
 
 		i, err := strconv.Atoi(record[2])
 
+		var tipoProd int32
+		if flag ==0 {
+			i, _ := strconv.Atoi(record[5])
+			tipoProd = int32(i)
+		} else{
+			tipoProd = 2
+		}
+
 		response, err := c.HacerPedido(context.Background(),
 		&chat.Orden{Id: record[0],
 			Producto: record[1],
 			Valor: int32(i),
 			Origen: record[3],
 			Destino: record[4],
-			Tipo: 2})
+			Tipo: tipoProd})
 		if err != nil {
 			log.Fatalf("Error when calling SayHello: %s", err)
 		}
