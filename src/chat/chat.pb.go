@@ -381,10 +381,11 @@ type Paquete struct {
 	unknownFields protoimpl.UnknownFields
 
 	Id       string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Estado   string `protobuf:"bytes,2,opt,name=estado,proto3" json:"estado,omitempty"`
-	Idcamion string `protobuf:"bytes,3,opt,name=idcamion,proto3" json:"idcamion,omitempty"`
-	Idseg    string `protobuf:"bytes,4,opt,name=idseg,proto3" json:"idseg,omitempty"`
+	Idseg    string `protobuf:"bytes,2,opt,name=idseg,proto3" json:"idseg,omitempty"`
+	Tipo     string `protobuf:"bytes,3,opt,name=tipo,proto3" json:"tipo,omitempty"`
+	Valor    int32  `protobuf:"varint,4,opt,name=valor,proto3" json:"valor,omitempty"`
 	Intentos int32  `protobuf:"varint,5,opt,name=intentos,proto3" json:"intentos,omitempty"`
+	Estado   string `protobuf:"bytes,6,opt,name=estado,proto3" json:"estado,omitempty"`
 }
 
 func (x *Paquete) Reset() {
@@ -426,20 +427,6 @@ func (x *Paquete) GetId() string {
 	return ""
 }
 
-func (x *Paquete) GetEstado() string {
-	if x != nil {
-		return x.Estado
-	}
-	return ""
-}
-
-func (x *Paquete) GetIdcamion() string {
-	if x != nil {
-		return x.Idcamion
-	}
-	return ""
-}
-
 func (x *Paquete) GetIdseg() string {
 	if x != nil {
 		return x.Idseg
@@ -447,9 +434,148 @@ func (x *Paquete) GetIdseg() string {
 	return ""
 }
 
+func (x *Paquete) GetTipo() string {
+	if x != nil {
+		return x.Tipo
+	}
+	return ""
+}
+
+func (x *Paquete) GetValor() int32 {
+	if x != nil {
+		return x.Valor
+	}
+	return 0
+}
+
 func (x *Paquete) GetIntentos() int32 {
 	if x != nil {
 		return x.Intentos
+	}
+	return 0
+}
+
+func (x *Paquete) GetEstado() string {
+	if x != nil {
+		return x.Estado
+	}
+	return ""
+}
+
+type Camion struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id   string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Tipo string `protobuf:"bytes,2,opt,name=tipo,proto3" json:"tipo,omitempty"`
+}
+
+func (x *Camion) Reset() {
+	*x = Camion{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chat_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Camion) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Camion) ProtoMessage() {}
+
+func (x *Camion) ProtoReflect() protoreflect.Message {
+	mi := &file_chat_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Camion.ProtoReflect.Descriptor instead.
+func (*Camion) Descriptor() ([]byte, []int) {
+	return file_chat_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *Camion) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Camion) GetTipo() string {
+	if x != nil {
+		return x.Tipo
+	}
+	return ""
+}
+
+type Carga struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Paq1 *Paquete `protobuf:"bytes,1,opt,name=paq1,proto3" json:"paq1,omitempty"`
+	Paq2 *Paquete `protobuf:"bytes,2,opt,name=paq2,proto3" json:"paq2,omitempty"`
+	Flag int32    `protobuf:"varint,3,opt,name=flag,proto3" json:"flag,omitempty"`
+}
+
+func (x *Carga) Reset() {
+	*x = Carga{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chat_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Carga) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Carga) ProtoMessage() {}
+
+func (x *Carga) ProtoReflect() protoreflect.Message {
+	mi := &file_chat_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Carga.ProtoReflect.Descriptor instead.
+func (*Carga) Descriptor() ([]byte, []int) {
+	return file_chat_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *Carga) GetPaq1() *Paquete {
+	if x != nil {
+		return x.Paq1
+	}
+	return nil
+}
+
+func (x *Carga) GetPaq2() *Paquete {
+	if x != nil {
+		return x.Paq2
+	}
+	return nil
+}
+
+func (x *Carga) GetFlag() int32 {
+	if x != nil {
+		return x.Flag
 	}
 	return 0
 }
@@ -482,22 +608,35 @@ var file_chat_proto_rawDesc = []byte{
 	0x12, 0x1a, 0x0a, 0x08, 0x69, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x6f, 0x73, 0x18, 0x02, 0x20, 0x01,
 	0x28, 0x05, 0x52, 0x08, 0x69, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x6f, 0x73, 0x12, 0x16, 0x0a, 0x06,
 	0x65, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x65, 0x73,
-	0x74, 0x61, 0x64, 0x6f, 0x22, 0x7f, 0x0a, 0x07, 0x50, 0x61, 0x71, 0x75, 0x65, 0x74, 0x65, 0x12,
-	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12,
-	0x16, 0x0a, 0x06, 0x65, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x06, 0x65, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x12, 0x1a, 0x0a, 0x08, 0x69, 0x64, 0x63, 0x61, 0x6d,
-	0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x69, 0x64, 0x63, 0x61, 0x6d,
-	0x69, 0x6f, 0x6e, 0x12, 0x14, 0x0a, 0x05, 0x69, 0x64, 0x73, 0x65, 0x67, 0x18, 0x04, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x05, 0x69, 0x64, 0x73, 0x65, 0x67, 0x12, 0x1a, 0x0a, 0x08, 0x69, 0x6e, 0x74,
-	0x65, 0x6e, 0x74, 0x6f, 0x73, 0x18, 0x05, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x69, 0x6e, 0x74,
-	0x65, 0x6e, 0x74, 0x6f, 0x73, 0x32, 0x65, 0x0a, 0x0b, 0x43, 0x68, 0x61, 0x74, 0x53, 0x65, 0x72,
-	0x76, 0x69, 0x63, 0x65, 0x12, 0x2a, 0x0a, 0x08, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c, 0x6f,
-	0x12, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a,
-	0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00,
-	0x12, 0x2a, 0x0a, 0x0b, 0x48, 0x61, 0x63, 0x65, 0x72, 0x50, 0x65, 0x64, 0x69, 0x64, 0x6f, 0x12,
-	0x0b, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4f, 0x72, 0x64, 0x65, 0x6e, 0x1a, 0x0c, 0x2e, 0x63,
-	0x68, 0x61, 0x74, 0x2e, 0x43, 0x6f, 0x64, 0x69, 0x67, 0x6f, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x61, 0x64, 0x6f, 0x22, 0x8d, 0x01, 0x0a, 0x07, 0x50, 0x61, 0x71, 0x75, 0x65, 0x74, 0x65,
+	0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64,
+	0x12, 0x14, 0x0a, 0x05, 0x69, 0x64, 0x73, 0x65, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x05, 0x69, 0x64, 0x73, 0x65, 0x67, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x69, 0x70, 0x6f, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x69, 0x70, 0x6f, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61,
+	0x6c, 0x6f, 0x72, 0x18, 0x04, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x6f, 0x72,
+	0x12, 0x1a, 0x0a, 0x08, 0x69, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x6f, 0x73, 0x18, 0x05, 0x20, 0x01,
+	0x28, 0x05, 0x52, 0x08, 0x69, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x6f, 0x73, 0x12, 0x16, 0x0a, 0x06,
+	0x65, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x65, 0x73,
+	0x74, 0x61, 0x64, 0x6f, 0x22, 0x2c, 0x0a, 0x06, 0x43, 0x61, 0x6d, 0x69, 0x6f, 0x6e, 0x12, 0x0e,
+	0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12,
+	0x0a, 0x04, 0x74, 0x69, 0x70, 0x6f, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x69,
+	0x70, 0x6f, 0x22, 0x61, 0x0a, 0x05, 0x43, 0x61, 0x72, 0x67, 0x61, 0x12, 0x21, 0x0a, 0x04, 0x70,
+	0x61, 0x71, 0x31, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74,
+	0x2e, 0x50, 0x61, 0x71, 0x75, 0x65, 0x74, 0x65, 0x52, 0x04, 0x70, 0x61, 0x71, 0x31, 0x12, 0x21,
+	0x0a, 0x04, 0x70, 0x61, 0x71, 0x32, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x63,
+	0x68, 0x61, 0x74, 0x2e, 0x50, 0x61, 0x71, 0x75, 0x65, 0x74, 0x65, 0x52, 0x04, 0x70, 0x61, 0x71,
+	0x32, 0x12, 0x12, 0x0a, 0x04, 0x66, 0x6c, 0x61, 0x67, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52,
+	0x04, 0x66, 0x6c, 0x61, 0x67, 0x32, 0x91, 0x01, 0x0a, 0x0b, 0x43, 0x68, 0x61, 0x74, 0x53, 0x65,
+	0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2a, 0x0a, 0x08, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c,
+	0x6f, 0x12, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
+	0x1a, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22,
+	0x00, 0x12, 0x2a, 0x0a, 0x0b, 0x48, 0x61, 0x63, 0x65, 0x72, 0x50, 0x65, 0x64, 0x69, 0x64, 0x6f,
+	0x12, 0x0b, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4f, 0x72, 0x64, 0x65, 0x6e, 0x1a, 0x0c, 0x2e,
+	0x63, 0x68, 0x61, 0x74, 0x2e, 0x43, 0x6f, 0x64, 0x69, 0x67, 0x6f, 0x22, 0x00, 0x12, 0x2a, 0x0a,
+	0x0b, 0x4c, 0x6c, 0x65, 0x67, 0x6f, 0x43, 0x61, 0x6d, 0x69, 0x6f, 0x6e, 0x12, 0x0c, 0x2e, 0x63,
+	0x68, 0x61, 0x74, 0x2e, 0x43, 0x61, 0x6d, 0x69, 0x6f, 0x6e, 0x1a, 0x0b, 0x2e, 0x63, 0x68, 0x61,
+	0x74, 0x2e, 0x43, 0x61, 0x72, 0x67, 0x61, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -512,7 +651,7 @@ func file_chat_proto_rawDescGZIP() []byte {
 	return file_chat_proto_rawDescData
 }
 
-var file_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_chat_proto_goTypes = []interface{}{
 	(*Message)(nil),  // 0: chat.Message
 	(*Orden)(nil),    // 1: chat.Orden
@@ -521,17 +660,23 @@ var file_chat_proto_goTypes = []interface{}{
 	(*Asigcam)(nil),  // 4: chat.Asigcam
 	(*Rescam)(nil),   // 5: chat.Rescam
 	(*Paquete)(nil),  // 6: chat.Paquete
+	(*Camion)(nil),   // 7: chat.Camion
+	(*Carga)(nil),    // 8: chat.Carga
 }
 var file_chat_proto_depIdxs = []int32{
-	0, // 0: chat.ChatService.SayHello:input_type -> chat.Message
-	1, // 1: chat.ChatService.HacerPedido:input_type -> chat.Orden
-	0, // 2: chat.ChatService.SayHello:output_type -> chat.Message
-	2, // 3: chat.ChatService.HacerPedido:output_type -> chat.Codigo
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	6, // 0: chat.Carga.paq1:type_name -> chat.Paquete
+	6, // 1: chat.Carga.paq2:type_name -> chat.Paquete
+	0, // 2: chat.ChatService.SayHello:input_type -> chat.Message
+	1, // 3: chat.ChatService.HacerPedido:input_type -> chat.Orden
+	7, // 4: chat.ChatService.LlegoCamion:input_type -> chat.Camion
+	0, // 5: chat.ChatService.SayHello:output_type -> chat.Message
+	2, // 6: chat.ChatService.HacerPedido:output_type -> chat.Codigo
+	8, // 7: chat.ChatService.LlegoCamion:output_type -> chat.Carga
+	5, // [5:8] is the sub-list for method output_type
+	2, // [2:5] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_chat_proto_init() }
@@ -624,6 +769,30 @@ func file_chat_proto_init() {
 				return nil
 			}
 		}
+		file_chat_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Camion); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_chat_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Carga); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -631,7 +800,7 @@ func file_chat_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_chat_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -660,6 +829,7 @@ type ChatServiceClient interface {
 	SayHello(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
 	// El cliente genera una orden
 	HacerPedido(ctx context.Context, in *Orden, opts ...grpc.CallOption) (*Codigo, error)
+	LlegoCamion(ctx context.Context, in *Camion, opts ...grpc.CallOption) (*Carga, error)
 }
 
 type chatServiceClient struct {
@@ -688,11 +858,21 @@ func (c *chatServiceClient) HacerPedido(ctx context.Context, in *Orden, opts ...
 	return out, nil
 }
 
+func (c *chatServiceClient) LlegoCamion(ctx context.Context, in *Camion, opts ...grpc.CallOption) (*Carga, error) {
+	out := new(Carga)
+	err := c.cc.Invoke(ctx, "/chat.ChatService/LlegoCamion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ChatServiceServer is the server API for ChatService service.
 type ChatServiceServer interface {
 	SayHello(context.Context, *Message) (*Message, error)
 	// El cliente genera una orden
 	HacerPedido(context.Context, *Orden) (*Codigo, error)
+	LlegoCamion(context.Context, *Camion) (*Carga, error)
 }
 
 // UnimplementedChatServiceServer can be embedded to have forward compatible implementations.
@@ -704,6 +884,9 @@ func (*UnimplementedChatServiceServer) SayHello(context.Context, *Message) (*Mes
 }
 func (*UnimplementedChatServiceServer) HacerPedido(context.Context, *Orden) (*Codigo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HacerPedido not implemented")
+}
+func (*UnimplementedChatServiceServer) LlegoCamion(context.Context, *Camion) (*Carga, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LlegoCamion not implemented")
 }
 
 func RegisterChatServiceServer(s *grpc.Server, srv ChatServiceServer) {
@@ -746,6 +929,24 @@ func _ChatService_HacerPedido_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatService_LlegoCamion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Camion)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatServiceServer).LlegoCamion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chat.ChatService/LlegoCamion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatServiceServer).LlegoCamion(ctx, req.(*Camion))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ChatService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "chat.ChatService",
 	HandlerType: (*ChatServiceServer)(nil),
@@ -757,6 +958,10 @@ var _ChatService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HacerPedido",
 			Handler:    _ChatService_HacerPedido_Handler,
+		},
+		{
+			MethodName: "LlegoCamion",
+			Handler:    _ChatService_LlegoCamion_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

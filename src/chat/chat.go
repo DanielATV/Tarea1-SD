@@ -30,6 +30,8 @@ func checkError(message string, err error) {
     }
 }
 
+
+
 func (s *Server) SayHello(ctx context.Context, in *Message) (*Message, error) {
 	log.Printf("Receive message body from client: %s", in.Body)
 
@@ -39,7 +41,7 @@ func (s *Server) SayHello(ctx context.Context, in *Message) (*Message, error) {
 func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 
 	
-	fmt.Println(s.SegOrd["asd"])
+	//fmt.Println(s.SegOrd["asd"])
 
 	currentTime := time.Now()
 	asd := currentTime.Format("2006-01-02 15:04:05")
@@ -76,7 +78,7 @@ func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 
 	//crear paquete
 
-	paquete := Paquete{Id: in.Id, Estado: "En bodega",Idseg: i,Intentos: 0}
+	paquete := Paquete{Id: in.Id, Estado: "En bodega",Idseg: i,Intentos: 0,Valor: int32(in.Valor),Tipo: tipostr}
 	log.Printf("El destino del pedido %s es %s",in.Id, in.Destino)
 
 	s.mux.Lock()
@@ -97,3 +99,15 @@ func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 	//falta arreglar el retorno
 	return &Codigo{Idcompra: "1234"}, nil
 }
+
+func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
+
+	log.Printf("Llego el camion: %s", in.Id)
+
+	c:= &Carga{Paq1: &Paquete{ Id: "asd"},
+	Paq2: &Paquete{Id : "qwerty"},
+	Flag: 0}
+	return c, nil
+
+}
+

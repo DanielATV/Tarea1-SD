@@ -21,8 +21,6 @@ func main() {
 	s := chat.Server{Asd: 0, SegOrd: make(map[string]string)}
 	//s.SegOrd= make(map[string]string)
 	s.SegOrd["asd"] = "holamundo"
-
-	//instacear map
 	
 
 	grpcServer := grpc.NewServer()

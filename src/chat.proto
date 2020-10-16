@@ -40,11 +40,13 @@ message Rescam{
 }
 
 message Paquete {
-  string id =1 ;
-  string estado = 2;
-  string idcamion = 3;
-  string idseg = 4;
-  int32 intentos = 5;
+  string id = 1;
+  string idseg = 2;
+  string tipo =3;
+  int32 valor =4;
+  int32 intentos =5;
+  string estado = 6;
+  
 }
 
 message Camion{
@@ -54,10 +56,11 @@ message Camion{
 }
 
 message Carga{
-  string paq1 = 1;
-  string paq2 = 2;
-  int32 valor1= 3;
-  int32 valor2= 4;
+  Paquete paq1 = 1;
+  Paquete paq2 = 2;
+  int32 flag = 3;
+
+
 }
 
 service ChatService {

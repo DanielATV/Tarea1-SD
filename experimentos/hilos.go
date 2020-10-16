@@ -21,6 +21,11 @@ func main() {
 	go display(&wg,"chao") 
 	go display(&wg,"mundo")
 
+	for i := 1; i <= 2; i++ {
+        wg.Add(1)
+        go display(&wg,"asd")
+    }
+
 	wg.Wait()
 
 	

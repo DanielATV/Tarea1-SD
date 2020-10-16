@@ -1,30 +1,49 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"net"
 
-	"github.com/tutorialedge/go-grpc-beginners-tutorial/camion"
+	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+
+	"github.com/tutorialedge/go-grpc-beginners-tutorial/chat"
+
+	"sync"
+	
 )
 
+
+
+
 func main() {
+	var wg sync.WaitGroup
+	wg.Add(3)
 
-	fmt.Println("Go gRPC Beginners Tutorial!")
+	go camion(&wg,"1","retail")
+	go camion(&wg,"2","retail")
+	go camion(&wg,"3","normal")
+	wg.Wait()
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 9001))
+}	
+
+	
+
+func camion(wg *sync.WaitGroup, id string,tipo string ){
+	defer wg.Done()
+	var conn *grpc.ClientConn
+	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Fatalf("did not connect: %s", err)
 	}
+	defer conn.Close()
 
-	s := camion.Server{}
+	c := chat.NewChatServiceClient(conn)
 
-	grpcServer := grpc.NewServer()
-
-	camion.RegisterChatServiceServer(grpcServer, &s)
-
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %s", err)
+	response, err := c.LlegoCamion(context.Background(), &chat.Camion{Id: id, Tipo: tipo})
+	if err != nil {
+		log.Fatalf("Error when calling SayHello: %s", err)
 	}
+	log.Printf("Response from server: %s", response.Paq1.Id)
+
+
 }
