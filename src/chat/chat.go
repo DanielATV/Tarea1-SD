@@ -18,7 +18,7 @@ type Server struct {
 	qret []Paquete
 	qprio []Paquete
 	qnormal []Paquete
-	segOrd map[string]string
+	SegOrd map[string]string
 	mux sync.Mutex
 	
 
@@ -37,6 +37,9 @@ func (s *Server) SayHello(ctx context.Context, in *Message) (*Message, error) {
 }
 
 func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
+
+	
+	fmt.Println(s.SegOrd["asd"])
 
 	currentTime := time.Now()
 	asd := currentTime.Format("2006-01-02 15:04:05")

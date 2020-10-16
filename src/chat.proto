@@ -47,6 +47,19 @@ message Paquete {
   int32 intentos = 5;
 }
 
+message Camion{
+  string id =1;
+  string tipo =2;
+  
+}
+
+message Carga{
+  string paq1 = 1;
+  string paq2 = 2;
+  int32 valor1= 3;
+  int32 valor2= 4;
+}
+
 service ChatService {
   rpc SayHello(Message) returns (Message) {}
 
@@ -58,4 +71,6 @@ service ChatService {
 
   // Seguimiento de la orden
   //rpc Seguimiento(stream Asigcam) returns (stream Rescam){}
+
+  rpc LlegoCamion(Camion) returns (Carga){}
 }

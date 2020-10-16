@@ -18,7 +18,11 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := chat.Server{Asd: 0}
+	s := chat.Server{Asd: 0, SegOrd: make(map[string]string)}
+	//s.SegOrd= make(map[string]string)
+	s.SegOrd["asd"] = "holamundo"
+
+	//instacear map
 	
 
 	grpcServer := grpc.NewServer()
