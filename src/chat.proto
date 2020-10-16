@@ -39,6 +39,14 @@ message Rescam{
 
 }
 
+message Paquete {
+  string id =1 ;
+  string estado = 2;
+  string idcamion = 3;
+  string idseg = 4;
+  int32 intentos = 5;
+}
+
 service ChatService {
   rpc SayHello(Message) returns (Message) {}
 

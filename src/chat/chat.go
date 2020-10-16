@@ -8,11 +8,20 @@ import (
 	"os"
 	"encoding/csv"
 	"strconv"
+	"fmt"
+	"sync"
 	
 )
 
 type Server struct {
 	Asd int
+	qret []Paquete
+	qprio []Paquete
+	qnormal []Paquete
+	segOrd map[string]string
+	mux sync.Mutex
+	
+
 }
 
 func checkError(message string, err error) {
@@ -62,9 +71,26 @@ func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 	err2 := writer.Write(mensaje)
     checkError("Cannot write to file", err2)
 
-	
+	//crear paquete
+
+	paquete := Paquete{Id: in.Id, Estado: "En bodega",Idseg: i,Intentos: 0}
 	log.Printf("El destino del pedido %s es %s",in.Id, in.Destino)
 
+	s.mux.Lock()
+	switch tipostr {
+	case "normal":
+		s.qnormal = append(s.qnormal,paquete)
+	
+	case "prioritario":
+		s.qprio = append(s.qprio,paquete)
+	case "retail":
+		s.qret = append(s.qret,paquete)
+		
+	}
+	s.mux.Unlock()
 
+	fmt.Println(len(s.qnormal))
+	fmt.Println(len(s.qprio))
+	//falta arreglar el retorno
 	return &Codigo{Idcompra: "1234"}, nil
 }
