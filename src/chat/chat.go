@@ -8,7 +8,7 @@ import (
 	"os"
 	"encoding/csv"
 	"strconv"
-	"fmt"
+	//"fmt"
 	"sync"
 	
 )
@@ -109,9 +109,10 @@ func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 	
 	s.mux.Unlock()
 
-	fmt.Println(len(s.qnormal))
-	fmt.Println(len(s.qprio))
-	fmt.Println(len(s.qret))
+	//fmt.Println(len(s.qnormal))
+	//fmt.Println(len(s.qprio))
+	//fmt.Println(len(s.qret))
+
 	//falta arreglar el retorno
 	return &Codigo{Idcompra: "1234"}, nil
 }
@@ -424,3 +425,12 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 
 }
 
+
+func (s *Server)EntregaCamion(ctx context.Context, in *Entrega) (*Respuesta, error){
+
+
+	log.Printf("Recibi %d paquetes", in.Num)
+	log.Printf("Id: %s , Tipo: %s, Estado: %s, Valor %d, Intentos %d",in.Inf1.Id,in.Inf1.Tipo,in.Inf1.Estado,in.Inf1.Valor,in.Inf1.Intentos)
+	return &Respuesta{Ack: "Datos recibidos"}, nil
+
+}

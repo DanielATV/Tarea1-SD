@@ -256,6 +256,28 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 			err2 := writer.Write(slc2)
 			checkError("Cannot write to file", err2)
 
+			infoPaq1:= &chat.Info{Id: primero.Id, 
+				Tipo: primero.Tipo,
+				Estado: primero.Estado,
+				Intentos: primero.Intentos,
+				Valor: primero.Valor}
+		
+			infoPaq2:= &chat.Info{Id: segundo.Id,
+				Tipo: segundo.Tipo,
+				Estado: segundo.Estado,
+				Intentos: segundo.Intentos,
+				Valor: segundo.Valor}
+				
+
+			entrega := &chat.Entrega{Num: int32(flag), Inf1: infoPaq1, Inf2: infoPaq2}
+
+			respuesta, err := c.EntregaCamion(context.Background(), entrega)
+			if err != nil {
+				log.Fatalf("Error when calling SayHello: %s", err)
+			}
+
+			fmt.Println(respuesta)
+
 		}else{
 			fmt.Println(primero)
 			aux = strconv.Itoa(int(primero.Valor))
@@ -264,6 +286,21 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 			var slc1 = []string{primero.Id,primero.Tipo,aux,origen1,dest1,aux2, entime1}
 			err := writer.Write(slc1)
 			checkError("Cannot write to file", err)
+
+			infoPaq1:= &chat.Info{Id: primero.Id, 
+				Tipo: primero.Tipo,
+				Estado: primero.Estado,
+				Intentos: primero.Intentos,
+				Valor: primero.Valor}
+			
+			entrega := &chat.Entrega{Num: int32(flag), Inf1: infoPaq1}
+
+			respuesta, err := c.EntregaCamion(context.Background(), entrega)
+			if err != nil {
+				log.Fatalf("Error when calling SayHello: %s", err)
+			}
+
+			fmt.Println(respuesta)
 		}
 
 		

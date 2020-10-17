@@ -72,6 +72,28 @@ message Carga{
 
 }
 
+
+
+message Info{
+  string id= 1;
+  string tipo = 2;
+  string estado =3;
+  int32 intentos =4;
+  int32 valor=5;
+
+
+}
+
+message Entrega {
+  int32 num = 1;
+  Info inf1 = 2;
+  Info inf2 = 3;
+}
+
+message Respuesta{
+  string ack = 1;
+}
+
 service ChatService {
   rpc SayHello(Message) returns (Message) {}
 
@@ -84,5 +106,10 @@ service ChatService {
   // Seguimiento de la orden
   //rpc Seguimiento(stream Asigcam) returns (stream Rescam){}
 
+  // LLega al camion y pide carga
   rpc LlegoCamion(Camion) returns (Carga){}
+
+  // El cambion informa si completo las entregas
+  rpc EntregaCamion(Entrega) returns (Respuesta){}
+
 }

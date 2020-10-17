@@ -614,6 +614,195 @@ func (x *Carga) GetDestino2() string {
 	return ""
 }
 
+type Info struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id       string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Tipo     string `protobuf:"bytes,2,opt,name=tipo,proto3" json:"tipo,omitempty"`
+	Estado   string `protobuf:"bytes,3,opt,name=estado,proto3" json:"estado,omitempty"`
+	Intentos int32  `protobuf:"varint,4,opt,name=intentos,proto3" json:"intentos,omitempty"`
+	Valor    int32  `protobuf:"varint,5,opt,name=valor,proto3" json:"valor,omitempty"`
+}
+
+func (x *Info) Reset() {
+	*x = Info{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chat_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Info) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Info) ProtoMessage() {}
+
+func (x *Info) ProtoReflect() protoreflect.Message {
+	mi := &file_chat_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Info.ProtoReflect.Descriptor instead.
+func (*Info) Descriptor() ([]byte, []int) {
+	return file_chat_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *Info) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Info) GetTipo() string {
+	if x != nil {
+		return x.Tipo
+	}
+	return ""
+}
+
+func (x *Info) GetEstado() string {
+	if x != nil {
+		return x.Estado
+	}
+	return ""
+}
+
+func (x *Info) GetIntentos() int32 {
+	if x != nil {
+		return x.Intentos
+	}
+	return 0
+}
+
+func (x *Info) GetValor() int32 {
+	if x != nil {
+		return x.Valor
+	}
+	return 0
+}
+
+type Entrega struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Num  int32 `protobuf:"varint,1,opt,name=num,proto3" json:"num,omitempty"`
+	Inf1 *Info `protobuf:"bytes,2,opt,name=inf1,proto3" json:"inf1,omitempty"`
+	Inf2 *Info `protobuf:"bytes,3,opt,name=inf2,proto3" json:"inf2,omitempty"`
+}
+
+func (x *Entrega) Reset() {
+	*x = Entrega{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chat_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Entrega) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Entrega) ProtoMessage() {}
+
+func (x *Entrega) ProtoReflect() protoreflect.Message {
+	mi := &file_chat_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Entrega.ProtoReflect.Descriptor instead.
+func (*Entrega) Descriptor() ([]byte, []int) {
+	return file_chat_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *Entrega) GetNum() int32 {
+	if x != nil {
+		return x.Num
+	}
+	return 0
+}
+
+func (x *Entrega) GetInf1() *Info {
+	if x != nil {
+		return x.Inf1
+	}
+	return nil
+}
+
+func (x *Entrega) GetInf2() *Info {
+	if x != nil {
+		return x.Inf2
+	}
+	return nil
+}
+
+type Respuesta struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Ack string `protobuf:"bytes,1,opt,name=ack,proto3" json:"ack,omitempty"`
+}
+
+func (x *Respuesta) Reset() {
+	*x = Respuesta{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_chat_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Respuesta) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Respuesta) ProtoMessage() {}
+
+func (x *Respuesta) ProtoReflect() protoreflect.Message {
+	mi := &file_chat_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Respuesta.ProtoReflect.Descriptor instead.
+func (*Respuesta) Descriptor() ([]byte, []int) {
+	return file_chat_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *Respuesta) GetAck() string {
+	if x != nil {
+		return x.Ack
+	}
+	return ""
+}
+
 var File_chat_proto protoreflect.FileDescriptor
 
 var file_chat_proto_rawDesc = []byte{
@@ -667,16 +856,35 @@ var file_chat_proto_rawDesc = []byte{
 	0x73, 0x74, 0x69, 0x6e, 0x6f, 0x31, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x64, 0x65,
 	0x73, 0x74, 0x69, 0x6e, 0x6f, 0x31, 0x12, 0x1a, 0x0a, 0x08, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e,
 	0x6f, 0x32, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x64, 0x65, 0x73, 0x74, 0x69, 0x6e,
-	0x6f, 0x32, 0x32, 0x91, 0x01, 0x0a, 0x0b, 0x43, 0x68, 0x61, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69,
-	0x63, 0x65, 0x12, 0x2a, 0x0a, 0x08, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x12, 0x0d,
-	0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a, 0x0d, 0x2e,
-	0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00, 0x12, 0x2a,
-	0x0a, 0x0b, 0x48, 0x61, 0x63, 0x65, 0x72, 0x50, 0x65, 0x64, 0x69, 0x64, 0x6f, 0x12, 0x0b, 0x2e,
-	0x63, 0x68, 0x61, 0x74, 0x2e, 0x4f, 0x72, 0x64, 0x65, 0x6e, 0x1a, 0x0c, 0x2e, 0x63, 0x68, 0x61,
-	0x74, 0x2e, 0x43, 0x6f, 0x64, 0x69, 0x67, 0x6f, 0x22, 0x00, 0x12, 0x2a, 0x0a, 0x0b, 0x4c, 0x6c,
-	0x65, 0x67, 0x6f, 0x43, 0x61, 0x6d, 0x69, 0x6f, 0x6e, 0x12, 0x0c, 0x2e, 0x63, 0x68, 0x61, 0x74,
-	0x2e, 0x43, 0x61, 0x6d, 0x69, 0x6f, 0x6e, 0x1a, 0x0b, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x43,
-	0x61, 0x72, 0x67, 0x61, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x32, 0x22, 0x74, 0x0a, 0x04, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x69,
+	0x70, 0x6f, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x69, 0x70, 0x6f, 0x12, 0x16,
+	0x0a, 0x06, 0x65, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
+	0x65, 0x73, 0x74, 0x61, 0x64, 0x6f, 0x12, 0x1a, 0x0a, 0x08, 0x69, 0x6e, 0x74, 0x65, 0x6e, 0x74,
+	0x6f, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x69, 0x6e, 0x74, 0x65, 0x6e, 0x74,
+	0x6f, 0x73, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x6f, 0x72, 0x18, 0x05, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x6f, 0x72, 0x22, 0x5b, 0x0a, 0x07, 0x45, 0x6e, 0x74, 0x72,
+	0x65, 0x67, 0x61, 0x12, 0x10, 0x0a, 0x03, 0x6e, 0x75, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05,
+	0x52, 0x03, 0x6e, 0x75, 0x6d, 0x12, 0x1e, 0x0a, 0x04, 0x69, 0x6e, 0x66, 0x31, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x49, 0x6e, 0x66, 0x6f, 0x52,
+	0x04, 0x69, 0x6e, 0x66, 0x31, 0x12, 0x1e, 0x0a, 0x04, 0x69, 0x6e, 0x66, 0x32, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x49, 0x6e, 0x66, 0x6f, 0x52,
+	0x04, 0x69, 0x6e, 0x66, 0x32, 0x22, 0x1d, 0x0a, 0x09, 0x52, 0x65, 0x73, 0x70, 0x75, 0x65, 0x73,
+	0x74, 0x61, 0x12, 0x10, 0x0a, 0x03, 0x61, 0x63, 0x6b, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x03, 0x61, 0x63, 0x6b, 0x32, 0xc4, 0x01, 0x0a, 0x0b, 0x43, 0x68, 0x61, 0x74, 0x53, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x12, 0x2a, 0x0a, 0x08, 0x53, 0x61, 0x79, 0x48, 0x65, 0x6c, 0x6c, 0x6f,
+	0x12, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x1a,
+	0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x00,
+	0x12, 0x2a, 0x0a, 0x0b, 0x48, 0x61, 0x63, 0x65, 0x72, 0x50, 0x65, 0x64, 0x69, 0x64, 0x6f, 0x12,
+	0x0b, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e, 0x4f, 0x72, 0x64, 0x65, 0x6e, 0x1a, 0x0c, 0x2e, 0x63,
+	0x68, 0x61, 0x74, 0x2e, 0x43, 0x6f, 0x64, 0x69, 0x67, 0x6f, 0x22, 0x00, 0x12, 0x2a, 0x0a, 0x0b,
+	0x4c, 0x6c, 0x65, 0x67, 0x6f, 0x43, 0x61, 0x6d, 0x69, 0x6f, 0x6e, 0x12, 0x0c, 0x2e, 0x63, 0x68,
+	0x61, 0x74, 0x2e, 0x43, 0x61, 0x6d, 0x69, 0x6f, 0x6e, 0x1a, 0x0b, 0x2e, 0x63, 0x68, 0x61, 0x74,
+	0x2e, 0x43, 0x61, 0x72, 0x67, 0x61, 0x22, 0x00, 0x12, 0x31, 0x0a, 0x0d, 0x45, 0x6e, 0x74, 0x72,
+	0x65, 0x67, 0x61, 0x43, 0x61, 0x6d, 0x69, 0x6f, 0x6e, 0x12, 0x0d, 0x2e, 0x63, 0x68, 0x61, 0x74,
+	0x2e, 0x45, 0x6e, 0x74, 0x72, 0x65, 0x67, 0x61, 0x1a, 0x0f, 0x2e, 0x63, 0x68, 0x61, 0x74, 0x2e,
+	0x52, 0x65, 0x73, 0x70, 0x75, 0x65, 0x73, 0x74, 0x61, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -691,32 +899,39 @@ func file_chat_proto_rawDescGZIP() []byte {
 	return file_chat_proto_rawDescData
 }
 
-var file_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_chat_proto_goTypes = []interface{}{
-	(*Message)(nil),  // 0: chat.Message
-	(*Orden)(nil),    // 1: chat.Orden
-	(*Codigo)(nil),   // 2: chat.Codigo
-	(*EstOrden)(nil), // 3: chat.EstOrden
-	(*Asigcam)(nil),  // 4: chat.Asigcam
-	(*Rescam)(nil),   // 5: chat.Rescam
-	(*Paquete)(nil),  // 6: chat.Paquete
-	(*Camion)(nil),   // 7: chat.Camion
-	(*Carga)(nil),    // 8: chat.Carga
+	(*Message)(nil),   // 0: chat.Message
+	(*Orden)(nil),     // 1: chat.Orden
+	(*Codigo)(nil),    // 2: chat.Codigo
+	(*EstOrden)(nil),  // 3: chat.EstOrden
+	(*Asigcam)(nil),   // 4: chat.Asigcam
+	(*Rescam)(nil),    // 5: chat.Rescam
+	(*Paquete)(nil),   // 6: chat.Paquete
+	(*Camion)(nil),    // 7: chat.Camion
+	(*Carga)(nil),     // 8: chat.Carga
+	(*Info)(nil),      // 9: chat.Info
+	(*Entrega)(nil),   // 10: chat.Entrega
+	(*Respuesta)(nil), // 11: chat.Respuesta
 }
 var file_chat_proto_depIdxs = []int32{
-	6, // 0: chat.Carga.paq1:type_name -> chat.Paquete
-	6, // 1: chat.Carga.paq2:type_name -> chat.Paquete
-	0, // 2: chat.ChatService.SayHello:input_type -> chat.Message
-	1, // 3: chat.ChatService.HacerPedido:input_type -> chat.Orden
-	7, // 4: chat.ChatService.LlegoCamion:input_type -> chat.Camion
-	0, // 5: chat.ChatService.SayHello:output_type -> chat.Message
-	2, // 6: chat.ChatService.HacerPedido:output_type -> chat.Codigo
-	8, // 7: chat.ChatService.LlegoCamion:output_type -> chat.Carga
-	5, // [5:8] is the sub-list for method output_type
-	2, // [2:5] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	6,  // 0: chat.Carga.paq1:type_name -> chat.Paquete
+	6,  // 1: chat.Carga.paq2:type_name -> chat.Paquete
+	9,  // 2: chat.Entrega.inf1:type_name -> chat.Info
+	9,  // 3: chat.Entrega.inf2:type_name -> chat.Info
+	0,  // 4: chat.ChatService.SayHello:input_type -> chat.Message
+	1,  // 5: chat.ChatService.HacerPedido:input_type -> chat.Orden
+	7,  // 6: chat.ChatService.LlegoCamion:input_type -> chat.Camion
+	10, // 7: chat.ChatService.EntregaCamion:input_type -> chat.Entrega
+	0,  // 8: chat.ChatService.SayHello:output_type -> chat.Message
+	2,  // 9: chat.ChatService.HacerPedido:output_type -> chat.Codigo
+	8,  // 10: chat.ChatService.LlegoCamion:output_type -> chat.Carga
+	11, // 11: chat.ChatService.EntregaCamion:output_type -> chat.Respuesta
+	8,  // [8:12] is the sub-list for method output_type
+	4,  // [4:8] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_chat_proto_init() }
@@ -833,6 +1048,42 @@ func file_chat_proto_init() {
 				return nil
 			}
 		}
+		file_chat_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Info); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_chat_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Entrega); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_chat_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Respuesta); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -840,7 +1091,7 @@ func file_chat_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_chat_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -869,7 +1120,9 @@ type ChatServiceClient interface {
 	SayHello(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Message, error)
 	// El cliente genera una orden
 	HacerPedido(ctx context.Context, in *Orden, opts ...grpc.CallOption) (*Codigo, error)
+	// LLega al camion y pide carga
 	LlegoCamion(ctx context.Context, in *Camion, opts ...grpc.CallOption) (*Carga, error)
+	EntregaCamion(ctx context.Context, in *Entrega, opts ...grpc.CallOption) (*Respuesta, error)
 }
 
 type chatServiceClient struct {
@@ -907,12 +1160,23 @@ func (c *chatServiceClient) LlegoCamion(ctx context.Context, in *Camion, opts ..
 	return out, nil
 }
 
+func (c *chatServiceClient) EntregaCamion(ctx context.Context, in *Entrega, opts ...grpc.CallOption) (*Respuesta, error) {
+	out := new(Respuesta)
+	err := c.cc.Invoke(ctx, "/chat.ChatService/EntregaCamion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ChatServiceServer is the server API for ChatService service.
 type ChatServiceServer interface {
 	SayHello(context.Context, *Message) (*Message, error)
 	// El cliente genera una orden
 	HacerPedido(context.Context, *Orden) (*Codigo, error)
+	// LLega al camion y pide carga
 	LlegoCamion(context.Context, *Camion) (*Carga, error)
+	EntregaCamion(context.Context, *Entrega) (*Respuesta, error)
 }
 
 // UnimplementedChatServiceServer can be embedded to have forward compatible implementations.
@@ -927,6 +1191,9 @@ func (*UnimplementedChatServiceServer) HacerPedido(context.Context, *Orden) (*Co
 }
 func (*UnimplementedChatServiceServer) LlegoCamion(context.Context, *Camion) (*Carga, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LlegoCamion not implemented")
+}
+func (*UnimplementedChatServiceServer) EntregaCamion(context.Context, *Entrega) (*Respuesta, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EntregaCamion not implemented")
 }
 
 func RegisterChatServiceServer(s *grpc.Server, srv ChatServiceServer) {
@@ -987,6 +1254,24 @@ func _ChatService_LlegoCamion_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatService_EntregaCamion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Entrega)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatServiceServer).EntregaCamion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chat.ChatService/EntregaCamion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatServiceServer).EntregaCamion(ctx, req.(*Entrega))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ChatService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "chat.ChatService",
 	HandlerType: (*ChatServiceServer)(nil),
@@ -1002,6 +1287,10 @@ var _ChatService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LlegoCamion",
 			Handler:    _ChatService_LlegoCamion_Handler,
+		},
+		{
+			MethodName: "EntregaCamion",
+			Handler:    _ChatService_EntregaCamion_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
