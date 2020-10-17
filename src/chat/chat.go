@@ -8,10 +8,27 @@ import (
 	"os"
 	"encoding/csv"
 	"strconv"
-	//"fmt"
 	"sync"
+
+	"fmt"
+
+	"encoding/json"
+	"github.com/streadway/amqp"
 	
 )
+
+//Estructura Json
+type User struct {
+	Name string
+	Numero int
+}
+
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Fatalf("%s: %s", msg, err)
+		panic(fmt.Sprintf("%s: %s", msg, err))
+	}
+}
 
 type Server struct {
 	Asd int
@@ -431,6 +448,47 @@ func (s *Server)EntregaCamion(ctx context.Context, in *Entrega) (*Respuesta, err
 
 	log.Printf("Recibi %d paquetes", in.Num)
 	log.Printf("Id: %s , Tipo: %s, Estado: %s, Valor %d, Intentos %d",in.Inf1.Id,in.Inf1.Tipo,in.Inf1.Estado,in.Inf1.Valor,in.Inf1.Intentos)
+
+	user := &User{Name: "Frank", Numero: 2}
+	b, _ := json.Marshal(user)
+	
+	
+    
+	
+
+	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	failOnError(err, "Failed to connect to RabbitMQ")
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	failOnError(err, "Failed to open a channel")
+	defer ch.Close()
+
+
+
+
+	q, err := ch.QueueDeclare(
+		"hello-queue", // name
+		false,         // durable
+		false,         // delete when unused
+		false,         // exclusive
+		false,         // no-wait
+		nil,           // arguments
+	)
+
+	failOnError(err, "Failed to declare a queue")
+	err = ch.Publish(
+		"",     // exchange
+		q.Name, // routing key
+		false,  // mandatory
+		false,  // immediate
+		amqp.Publishing{
+			ContentType: "application/json",
+			Body:        b,
+		})
+	log.Printf(" [x] Sent %s", string(b))
+	failOnError(err, "Failed to publish a message")
+	
 	return &Respuesta{Ack: "Datos recibidos"}, nil
 
 }
