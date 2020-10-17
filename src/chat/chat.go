@@ -18,9 +18,14 @@ import (
 )
 
 //Estructura Json
-type User struct {
-	Name string
-	Numero int
+
+type Datos struct {
+
+	Id string
+	Tipo string
+	Estado string
+	Intentos int
+	Valor int
 }
 
 func failOnError(err error, msg string) {
@@ -446,11 +451,11 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 func (s *Server)EntregaCamion(ctx context.Context, in *Entrega) (*Respuesta, error){
 
 
-	log.Printf("Recibi %d paquetes", in.Num)
-	log.Printf("Id: %s , Tipo: %s, Estado: %s, Valor %d, Intentos %d",in.Inf1.Id,in.Inf1.Tipo,in.Inf1.Estado,in.Inf1.Valor,in.Inf1.Intentos)
+	//log.Printf("Recibi %d paquetes", in.Num)
+	//log.Printf("Id: %s , Tipo: %s, Estado: %s, Valor %d, Intentos %d",in.Inf1.Id,in.Inf1.Tipo,in.Inf1.Estado,in.Inf1.Valor,in.Inf1.Intentos)
 
-	user := &User{Name: "Frank", Numero: 2}
-	b, _ := json.Marshal(user)
+	//user := &User{Name: "Frank", Numero: 2}
+	//b, _ := json.Marshal(user)
 	
 	
     
@@ -477,17 +482,77 @@ func (s *Server)EntregaCamion(ctx context.Context, in *Entrega) (*Respuesta, err
 	)
 
 	failOnError(err, "Failed to declare a queue")
-	err = ch.Publish(
-		"",     // exchange
-		q.Name, // routing key
-		false,  // mandatory
-		false,  // immediate
-		amqp.Publishing{
-			ContentType: "application/json",
-			Body:        b,
-		})
-	log.Printf(" [x] Sent %s", string(b))
-	failOnError(err, "Failed to publish a message")
+
+	if in.Num == 2{
+		
+		load1 := &Datos{Id: in.Inf1.Id,
+		Tipo: in.Inf1.Tipo,
+		Estado:in.Inf1.Estado,
+		Valor:int(in.Inf1.Valor),
+		Intentos:int(in.Inf1.Intentos)}
+
+		ld1, _ := json.Marshal(load1)
+
+		err = ch.Publish(
+			"",     // exchange
+			q.Name, // routing key
+			false,  // mandatory
+			false,  // immediate
+			amqp.Publishing{
+				ContentType: "application/json",
+				Body:        ld1,
+			})
+
+		failOnError(err, "Failed to publish a message")
+
+		load2 := &Datos{Id: in.Inf2.Id,
+		Tipo: in.Inf2.Tipo,
+		Estado:in.Inf2.Estado,
+		Valor:int(in.Inf2.Valor),
+		Intentos:int(in.Inf2.Intentos)}
+
+		ld2, _ := json.Marshal(load2)
+		err = ch.Publish(
+			"",     // exchange
+			q.Name, // routing key
+			false,  // mandatory
+			false,  // immediate
+			amqp.Publishing{
+				ContentType: "application/json",
+				Body:        ld2,
+			})
+
+		failOnError(err, "Failed to publish a message")
+
+
+	} else{
+
+		load1 := &Datos{Id: in.Inf1.Id,
+		Tipo: in.Inf1.Tipo,
+		Estado:in.Inf1.Estado,
+		Valor:int(in.Inf1.Valor),
+		Intentos:int(in.Inf1.Intentos)}
+
+		ld1, _ := json.Marshal(load1)
+
+		err = ch.Publish(
+			"",     // exchange
+			q.Name, // routing key
+			false,  // mandatory
+			false,  // immediate
+			amqp.Publishing{
+				ContentType: "application/json",
+				Body:        ld1,
+			})
+
+		failOnError(err, "Failed to publish a message")
+
+
+	}
+
+	
+	//log.Printf(" [x] Sent %s", string(b))
+	//failOnError(err, "Failed to publish a message")
 	
 	return &Respuesta{Ack: "Datos recibidos"}, nil
 
