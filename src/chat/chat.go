@@ -54,20 +54,26 @@ func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 	defer writer.Flush()
 
 
-	s.Asd = s.Asd + 1
-	i:= strconv.Itoa(s.Asd)
+	
+	
 	j:= strconv.Itoa(int(in.Valor))
 	
 	tipo := in.Tipo
 	var tipostr string
+	var i string
 
 	switch tipo {
     case 0:
-        tipostr = "normal"
+		tipostr = "normal"
+		s.Asd = s.Asd + 1
+		i= strconv.Itoa(s.Asd)
     case 1:
-        tipostr = "prioritario"
+		tipostr = "prioritario"
+		s.Asd = s.Asd + 1
+		i= strconv.Itoa(s.Asd)
     case 2:
-        tipostr = "retail"
+		tipostr = "retail"
+		i = "0"
     }
 	var mensaje = []string{asd,in.Id,tipostr,in.Producto,j,in.Origen,in.Destino,i}
 	
@@ -85,9 +91,11 @@ func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 	switch tipostr {
 	case "normal":
 		s.qnormal = append(s.qnormal,paquete)
+		s.SegOrd[i] = "En bodega"
 	
 	case "prioritario":
 		s.qprio = append(s.qprio,paquete)
+		s.SegOrd[i] = "En bodega"
 	case "retail":
 		s.qret = append(s.qret,paquete)
 		
@@ -104,9 +112,292 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 
 	log.Printf("Llego el camion: %s", in.Id)
 
-	c:= &Carga{Paq1: &Paquete{ Id: "asd"},
-	Paq2: &Paquete{Id : "qwerty"},
-	Flag: 0}
+	tipocam := in.Tipo
+
+	c:= &Carga{}
+
+	switch tipocam {
+	case "normal":
+
+		carga := 0
+		wait := false
+		flag := false
+
+		for carga != 2{
+			//parte con 1 paquete
+			if flag == true{
+				break
+			}
+
+			//termina de esperar
+			if wait == true {
+
+				//sleep
+				time.Sleep(8 * time.Second) 
+				flag = true
+			}
+
+			if len(s.qprio) > 0{
+				if len(s.qprio) >=2 && carga == 0{
+
+
+					s.mux.Lock()
+
+					packet1 := s.qprio[0]
+					s.qret = s.qprio[1:]
+					packet2 := s.qprio[0]
+					s.qret = s.qprio[1:]
+
+					s.SegOrd[packet1.Idseg] = "En camino"
+					s.SegOrd[packet2.Idseg] = "En camino"
+
+					s.mux.Unlock()
+
+					c.Paq1 = &packet1
+					c.Paq2 = &packet2
+					c.Flag = 2
+
+					break
+
+				} else {
+					if carga == 1{
+						s.mux.Lock()
+
+						
+						packet2 := s.qprio[0]
+						s.qret = s.qprio[1:]
+						s.SegOrd[packet2.Idseg] = "En camino"
+
+						s.mux.Unlock()
+
+						c.Paq2 = &packet2
+						c.Flag = 2
+					} else {
+						s.mux.Lock()
+						packet1 := s.qprio[0]
+						s.qret = s.qprio[1:]
+						s.SegOrd[packet1.Id] = "En camino"
+
+						s.mux.Unlock()
+
+						c.Paq1 = &packet1
+						c.Flag = 1
+
+					}
+				
+					carga =  carga + 1
+					wait = true
+					
+
+				}
+
+				
+				
+				
+
+			} else if len(s.qnormal) > 0{
+				if len(s.qnormal) >=2 && carga == 0{
+
+					s.mux.Lock()
+
+					packet1 := s.qnormal[0]
+					s.qret = s.qnormal[1:]
+					packet2 := s.qnormal[0]
+					s.qret = s.qnormal[1:]
+
+					s.SegOrd[packet1.Idseg] = "En camino"
+					s.SegOrd[packet2.Idseg] = "En camino"
+
+					s.mux.Unlock()
+
+					c.Paq1 = &packet1
+					c.Paq2 = &packet2
+					c.Flag = 2
+
+					break
+
+				} else {
+					if carga == 1{
+
+						s.mux.Lock()
+
+						
+						packet2 := s.qnormal[0]
+						s.qret = s.qnormal[1:]
+						
+
+						s.mux.Unlock()
+
+						c.Paq2 = &packet2
+						c.Flag = 2
+
+					} else {
+
+						s.mux.Lock()
+						packet1 := s.qnormal[0]
+						s.qret = s.qnormal[1:]
+						
+
+						s.mux.Unlock()
+
+						c.Paq1 = &packet1
+						c.Flag = 1
+
+					}
+
+					carga =  carga + 1
+					wait = true
+				}
+
+
+			}
+
+		}
+	case "retail":
+
+		carga := 0
+		wait := false
+		flag := false
+
+		for carga != 2{
+
+			//parte con 1 paquete
+			if flag == true{
+				break
+			}
+
+			//termina de esperar
+			if wait == true {
+
+				//sleep
+				time.Sleep(8 * time.Second) 
+				flag = true
+			}
+
+
+			// hay paquete en la cola retail
+			if len(s.qret) > 0{
+				//revisa camion vacio e inclute 2 paquetes
+				if len(s.qret) >=2 && carga == 0{
+				
+
+					s.mux.Lock()
+
+					packet1 := s.qret[0]
+					s.qret = s.qret[1:]
+					packet2 := s.qret[0]
+					s.qret = s.qret[1:]
+
+					s.mux.Unlock()
+
+					c.Paq1 = &packet1
+					c.Paq2 = &packet2
+					c.Flag = 2
+
+					break
+
+
+				} else {
+
+					if carga == 1{
+						s.mux.Lock()
+
+						
+						packet2 := s.qret[0]
+						s.qret = s.qret[1:]
+						
+
+						s.mux.Unlock()
+
+						c.Paq2 = &packet2
+						c.Flag = 2
+				
+
+					} else {
+
+						s.mux.Lock()
+						packet1 := s.qret[0]
+						s.qret = s.qret[1:]
+						
+
+						s.mux.Unlock()
+
+						c.Paq1 = &packet1
+						c.Flag = 1
+
+					}
+
+					carga =  carga + 1
+					wait = true
+
+				}
+				
+			} else if len(s.qprio) > 0{
+				if len(s.qprio) >=2 && carga == 0{
+
+
+					s.mux.Lock()
+
+					packet1 := s.qprio[0]
+					s.qret = s.qprio[1:]
+					packet2 := s.qprio[0]
+					s.qret = s.qprio[1:]
+
+					s.SegOrd[packet1.Idseg] = "En camino"
+					s.SegOrd[packet2.Idseg] = "En camino"
+
+					s.mux.Unlock()
+
+					c.Paq1 = &packet1
+					c.Paq2 = &packet2
+					c.Flag = 2
+					break
+
+				} else {
+
+					if carga ==1 {
+						s.mux.Lock()
+
+						
+						packet2 := s.qprio[0]
+						s.qret = s.qprio[1:]
+						s.SegOrd[packet2.Idseg] = "En camino"
+
+						s.mux.Unlock()
+
+						c.Paq2 = &packet2
+						c.Flag = 2
+						
+
+					} else {
+
+						s.mux.Lock()
+						packet1 := s.qprio[0]
+						s.qret = s.qprio[1:]
+						s.SegOrd[packet1.Id] = "En camino"
+
+						s.mux.Unlock()
+
+						c.Paq1 = &packet1
+						c.Flag = 1
+
+					}
+
+					carga =  carga + 1
+					wait = true
+
+				}
+			}
+
+		}
+		
+		
+	}
+
+
+	//d:= &Carga{Paq1: &Paquete{ Id: "asd"},
+	//Paq2: &Paquete{Id : "qwerty"},
+	//Flag: 0}
 	return c, nil
 
 }

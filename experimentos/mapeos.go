@@ -28,13 +28,13 @@ func main() {
 	fmt.Println(s.mapeo["qwer"])
 	
 	s.lista = append(s.lista,2)
-	s.lista = append(s.lista,6)
+	//s.lista = append(s.lista,6)
 
 
 	//pop
 	_, s.lista = s.lista[0], s.lista[1:]
 
-	fmt.Println(s.lista[0])
+	fmt.Println(len(s.lista))
 
 
 
