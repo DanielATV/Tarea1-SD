@@ -49,12 +49,17 @@ message Paquete {
   
 }
 
+
+//agregar parametro lo que espera el camion
 message Camion{
   string id =1;
   string tipo =2;
   
 }
 
+
+
+//agregar destinos de los paquetes
 message Carga{
   Paquete paq1 = 1;
   Paquete paq2 = 2;

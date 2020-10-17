@@ -104,11 +104,14 @@ func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 
 	fmt.Println(len(s.qnormal))
 	fmt.Println(len(s.qprio))
+	fmt.Println(len(s.qret))
 	//falta arreglar el retorno
 	return &Codigo{Idcompra: "1234"}, nil
 }
 
 func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
+
+	//agregar origen/destino a carga
 
 	log.Printf("Llego el camion: %s", in.Id)
 
@@ -133,7 +136,7 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 			if wait == true {
 
 				//sleep
-				time.Sleep(8 * time.Second) 
+				time.Sleep(10 * time.Second) 
 				flag = true
 			}
 
@@ -144,9 +147,9 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 					s.mux.Lock()
 
 					packet1 := s.qprio[0]
-					s.qret = s.qprio[1:]
+					s.qprio = s.qprio[1:]
 					packet2 := s.qprio[0]
-					s.qret = s.qprio[1:]
+					s.qprio = s.qprio[1:]
 
 					s.SegOrd[packet1.Idseg] = "En camino"
 					s.SegOrd[packet2.Idseg] = "En camino"
@@ -165,7 +168,7 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 
 						
 						packet2 := s.qprio[0]
-						s.qret = s.qprio[1:]
+						s.qprio = s.qprio[1:]
 						s.SegOrd[packet2.Idseg] = "En camino"
 
 						s.mux.Unlock()
@@ -175,7 +178,7 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 					} else {
 						s.mux.Lock()
 						packet1 := s.qprio[0]
-						s.qret = s.qprio[1:]
+						s.qprio = s.qprio[1:]
 						s.SegOrd[packet1.Id] = "En camino"
 
 						s.mux.Unlock()
@@ -201,9 +204,9 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 					s.mux.Lock()
 
 					packet1 := s.qnormal[0]
-					s.qret = s.qnormal[1:]
+					s.qnormal = s.qnormal[1:]
 					packet2 := s.qnormal[0]
-					s.qret = s.qnormal[1:]
+					s.qnormal = s.qnormal[1:]
 
 					s.SegOrd[packet1.Idseg] = "En camino"
 					s.SegOrd[packet2.Idseg] = "En camino"
@@ -223,7 +226,7 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 
 						
 						packet2 := s.qnormal[0]
-						s.qret = s.qnormal[1:]
+						s.qnormal = s.qnormal[1:]
 						
 
 						s.mux.Unlock()
@@ -235,7 +238,7 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 
 						s.mux.Lock()
 						packet1 := s.qnormal[0]
-						s.qret = s.qnormal[1:]
+						s.qnormal = s.qnormal[1:]
 						
 
 						s.mux.Unlock()
@@ -339,9 +342,9 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 					s.mux.Lock()
 
 					packet1 := s.qprio[0]
-					s.qret = s.qprio[1:]
+					s.qprio = s.qprio[1:]
 					packet2 := s.qprio[0]
-					s.qret = s.qprio[1:]
+					s.qprio = s.qprio[1:]
 
 					s.SegOrd[packet1.Idseg] = "En camino"
 					s.SegOrd[packet2.Idseg] = "En camino"
@@ -360,7 +363,7 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 
 						
 						packet2 := s.qprio[0]
-						s.qret = s.qprio[1:]
+						s.qprio = s.qprio[1:]
 						s.SegOrd[packet2.Idseg] = "En camino"
 
 						s.mux.Unlock()
@@ -373,7 +376,7 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 
 						s.mux.Lock()
 						packet1 := s.qprio[0]
-						s.qret = s.qprio[1:]
+						s.qprio = s.qprio[1:]
 						s.SegOrd[packet1.Id] = "En camino"
 
 						s.mux.Unlock()
