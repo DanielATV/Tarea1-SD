@@ -40,6 +40,8 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 
 	//preparar archivo
 
+	//cambiar para for infinito
+
 	nombre := "camion" + id + ".csv"
 	file, err := os.OpenFile(nombre, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	checkError("Cannot create file", err)
@@ -160,7 +162,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 				if (porcentaje <=80){ //paquete entregado
 					ent1 = 1
 					paquetesent = paquetesent+1
-					primero.Estado = "Entregado"
+					primero.Estado = "Recibido"
 					primero.Intentos = try1
 					currentTime := time.Now()
 					entime1 = currentTime.Format("2006-01-02 15:04:05")
@@ -173,7 +175,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 						
 						ent1 = 1
 						paquetesent = paquetesent + 1
-						primero.Estado = "Rechazado"
+						primero.Estado = "No Recibido"
 						primero.Intentos = try1
 						
 					}
@@ -184,7 +186,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 						
 						ent1 = 1
 						paquetesent = paquetesent + 1
-						primero.Estado = "Rechazado"
+						primero.Estado = "No Recibido"
 						primero.Intentos = try1
 						
 					}
@@ -201,7 +203,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 				if (porcentaje <=80){ //paquete entregado
 					ent2 = 1
 					paquetesent = paquetesent+1
-					segundo.Estado = "Entregado"
+					segundo.Estado = "Recibido"
 					segundo.Intentos = try2
 					currentTime := time.Now()
 					
@@ -213,7 +215,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 					if (try2 > tope2 || segundo.Valor < 10*(try2)){ // caso de no mas intentos
 						ent2 = 1
 						paquetesent = paquetesent + 1
-						segundo.Estado = "Rechazado"
+						segundo.Estado = "No Recibido"
 						segundo.Intentos = try2
 						
 					}
@@ -223,7 +225,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 					if (try2 > tope2 ){ // caso de no mas intentos
 						ent2 = 1
 						paquetesent = paquetesent + 1
-						segundo.Estado = "Rechazado"
+						segundo.Estado = "No Recibido"
 						segundo.Intentos = try2
 						
 					}

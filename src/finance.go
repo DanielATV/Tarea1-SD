@@ -29,6 +29,20 @@ func failOnError(err error, msg string) {
 
 func main() {
 
+	var perdidasTot float32
+	var gananciasTot float32
+	var balance float32
+
+	perdidasTot = float32(0)
+	gananciasTot = float32(0)
+	balance = float32(0)
+
+	var gananciaPaq int
+	var perdidaPaq int
+
+	var dumb float32
+	
+	flag := 0
 	
 	
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
@@ -70,8 +84,11 @@ func main() {
 	var dummy string
 	var dummy2 string
 
+	var parche string
+
 	go func() {
 		for d := range msgs {
+			
 			json.Unmarshal(d.Body, &res)
 
 			file, err := os.OpenFile("RegistroFinanciero.csv", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
@@ -81,21 +98,79 @@ func main() {
 			writer := csv.NewWriter(file)
 			
 
-			dummy = strconv.Itoa(int(res.Intentos))
-			dummy2 = strconv.Itoa(int(res.Valor))
+			
+
+			switch res.Tipo{
+			case "retail":
+				gananciaPaq = res.Valor
+
+
+				
+			case "prioritario":
+				flag = 1
+				if res.Estado == "Recibido"{
+
+					dumb = float32(res.Valor)*1.3
+					
+				} else{
+					dumb = float32(res.Valor)*0.3
+				}
+
+
+
+			case "normal":
+				if res.Estado == "Recibido"{
+					gananciaPaq = res.Valor
+
+				} else{
+
+					gananciaPaq = 0
+
+				}
+				
+			}
+
+			perdidaPaq = (res.Intentos-1)*10
+
+			if flag == 1{
+
+				dummy = strconv.FormatFloat(float64(dumb), 'f',2, 32)
+				dummy2 = strconv.Itoa(perdidaPaq)
+
+				gananciasTot = gananciasTot + dumb
+				flag = 0
+				
+
+			} else{
+
+				dummy = strconv.Itoa(gananciaPaq)
+				dummy2 = strconv.Itoa(perdidaPaq)
+
+				gananciasTot = gananciasTot + float32(gananciaPaq)
+				
+
+			}
+
+			perdidasTot = perdidasTot + float32(perdidaPaq)
+
+			balance = gananciasTot - perdidasTot
+
+			
 
 			//falta ganancia, perdida por item
 
-			slc1 := []string{res.Id,res.Tipo,res.Estado,dummy,dummy2}
+			parche= strconv.Itoa(res.Intentos)
+
+			slc1 := []string{res.Id,res.Tipo,res.Estado,parche,dummy,dummy2}
 			err2 := writer.Write(slc1)
 			checkError("Cannot write to file", err2)
 			
 			writer.Flush()
 			file.Close()
 
-			fmt.Println(res.Id)
+			fmt.Println("El balance final es: ", balance)
 			
-			fmt.Println(res.Tipo)
+			
 		}
 	}()
 

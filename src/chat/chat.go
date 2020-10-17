@@ -458,6 +458,7 @@ func (s *Server)EntregaCamion(ctx context.Context, in *Entrega) (*Respuesta, err
 	//b, _ := json.Marshal(user)
 	
 	
+	//cambiar el dic con el estado del paq como recibido o no recibido
     
 	
 
