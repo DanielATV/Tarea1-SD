@@ -106,8 +106,8 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 
 		//Entregar y ver los re-intentos
 		paquetesent := 0
-		try1 := int32(0)
-		try2 :=int32(0)
+		try1 := int32(1)
+		try2 :=int32(1)
 		var porcentaje int
 		rand.Seed(time.Now().UnixNano()) // seed
 
@@ -129,8 +129,11 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 					entime1 = currentTime.Format("2006-01-02 15:04:05")
 	
 				}else{ //fallo
+
 					
-					if (try1 > tope1 || primero.Valor < 10*(try1+1)){ // caso de no mas intentos
+					
+					if (try1 > tope1 || primero.Valor < 10*(try1)){ // caso de no mas intentos
+						
 						ent1 = 1
 						paquetesent = paquetesent + 1
 						primero.Estado = "Rechazado"
@@ -138,6 +141,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 						
 					}
 					try1 = try1+1
+					
 				}
 	
 			}
@@ -155,8 +159,10 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 					
 					entime2 = currentTime.Format("2006-01-02 15:04:05")
 				}else{ //fallo
+
 					
-					if (try2 > tope2 || segundo.Valor < 10*(try2+1)){ // caso de no mas intentos
+					
+					if (try2 > tope2 || segundo.Valor < 10*(try2)){ // caso de no mas intentos
 						ent2 = 1
 						paquetesent = paquetesent + 1
 						segundo.Estado = "Rechazado"
@@ -164,6 +170,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 						
 					}
 					try2 = try2+1
+					
 				}
 	
 			}
