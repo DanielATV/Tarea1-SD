@@ -37,6 +37,17 @@ func main() {
 
 func camion(wg *sync.WaitGroup, id string,tipo string ){
 	defer wg.Done()
+
+	//preparar archivo
+
+	nombre := "camion" + id + ".csv"
+	file, err := os.OpenFile(nombre, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	checkError("Cannot create file", err)
+	defer file.Close()
+
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
 	for  i := 0; i < 5; i++{
 		var conn *grpc.ClientConn
 		conn, err := grpc.Dial(":9000", grpc.WithInsecure())
@@ -54,15 +65,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 			log.Fatalf("Error when calling SayHello: %s", err)
 		}
 
-		//preparar archivo
-
-		nombre := "camion" + id + ".csv"
-		file, err := os.OpenFile(nombre, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-		checkError("Cannot create file", err)
-		defer file.Close()
-
-		writer := csv.NewWriter(file)
-		defer writer.Flush()
+		
 		
 		ent1 :=0
 		ent2 :=0
@@ -70,21 +73,55 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 		var primero *chat.Paquete
 		var segundo *chat.Paquete
 
+		var cost1 float32
+		var cost2 float32
+
+
 		flag := response.Flag
 
 		if flag == 2 {
+			if response.Paq1.Tipo == "retail"{
+				cost1 = float32(response.Paq1.Valor)
+			} else{
+				cost1 = float32(response.Paq1.Valor) + float32(response.Paq1.Valor)*0.3
+			}
+			if response.Paq2.Tipo == "pyme"{
+				cost2 = float32(response.Paq2.Valor) + float32(response.Paq2.Valor)*0.3
+			}else{
+				cost2 = float32(response.Paq2.Valor)
+			}
+		}
 
-			if ( response.Paq2.Valor > response.Paq1.Valor){
+		var dest1 string
+		var dest2 string
+		var origen1 string
+		var origen2 string
+
+		if flag == 2 {
+
+			if ( cost2 > cost1){
 				primero = response.Paq2
+				dest1 = response.Destino2
+				origen1 = response.Origen2
+
 				segundo = response.Paq1
+				dest2 = response.Destino1
+				origen2 = response.Origen1
 			}else{
 				primero  = response.Paq1
+				dest1 = response.Destino1
+				origen1 = response.Origen1
+
 				segundo  = response.Paq2
+				dest2 = response.Destino2
+				origen2 = response.Origen2
 			}
 			//fmt.Println(primero,segundo)
 		} else{
 			ent2 = 1
 			primero = response.Paq1
+			dest1 = response.Destino1
+			origen1 = response.Origen1
 		}
 
 		//Asignar tope de reintentos
@@ -128,7 +165,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 					currentTime := time.Now()
 					entime1 = currentTime.Format("2006-01-02 15:04:05")
 	
-				}else{ //fallo
+				}else if (tope1 == 2){ //fallo
 
 					
 					
@@ -142,6 +179,17 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 					}
 					try1 = try1+1
 					
+				} else{
+					if (try1 > tope1){ // caso de no mas intentos
+						
+						ent1 = 1
+						paquetesent = paquetesent + 1
+						primero.Estado = "Rechazado"
+						primero.Intentos = try1
+						
+					}
+					try1 = try1+1
+
 				}
 	
 			}
@@ -158,7 +206,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 					currentTime := time.Now()
 					
 					entime2 = currentTime.Format("2006-01-02 15:04:05")
-				}else{ //fallo
+				}else if (tope2 ==2){ //fallo
 
 					
 					
@@ -171,6 +219,16 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 					}
 					try2 = try2+1
 					
+				} else{
+					if (try2 > tope2 ){ // caso de no mas intentos
+						ent2 = 1
+						paquetesent = paquetesent + 1
+						segundo.Estado = "Rechazado"
+						segundo.Intentos = try2
+						
+					}
+					try2 = try2+1
+
 				}
 	
 			}
@@ -185,12 +243,16 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 			//fmt.Println(primero,segundo)
 			aux = strconv.Itoa(int(primero.Valor))
 			aux2 = strconv.Itoa(int(primero.Intentos))
-			var slc1 = []string{primero.Id,primero.Idseg,primero.Tipo,aux,aux2,primero.Estado, entime1}
+			var slc1 = []string{primero.Id,primero.Tipo,aux,origen1,dest1,aux2, entime1}
+			fmt.Println(slc1)
+			//var slc1 = []string{primero.Id,primero.Idseg,primero.Tipo,aux,aux2,primero.Estado, entime1}
+
 			err := writer.Write(slc1)
 			checkError("Cannot write to file", err)
 			aux = strconv.Itoa(int(segundo.Valor))
 			aux2 = strconv.Itoa(int(segundo.Intentos))
-			var slc2 = []string{segundo.Id,segundo.Idseg,segundo.Tipo,aux,aux2,segundo.Estado, entime2 }
+			//var slc2 = []string{segundo.Id,segundo.Idseg,segundo.Tipo,aux,aux2,segundo.Estado, entime2 }
+			var slc2 = []string{segundo.Id,segundo.Tipo,aux,origen2,dest2,aux2, entime2}
 			err2 := writer.Write(slc2)
 			checkError("Cannot write to file", err2)
 
@@ -198,13 +260,14 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 			fmt.Println(primero)
 			aux = strconv.Itoa(int(primero.Valor))
 			aux2 = strconv.Itoa(int(primero.Intentos))
-			var slc1 = []string{primero.Id,primero.Idseg,primero.Tipo,aux,aux2,primero.Estado, entime1}
+			//var slc1 = []string{primero.Id,primero.Idseg,primero.Tipo,aux,aux2,primero.Estado, entime1}
+			var slc1 = []string{primero.Id,primero.Tipo,aux,origen1,dest1,aux2, entime1}
 			err := writer.Write(slc1)
 			checkError("Cannot write to file", err)
 		}
 
-
-		log.Printf("Response from server: %s", response.Paq1.Id)
+		
+		//log.Printf("Id: %s, Origen: %s, Destino: %s", response.Paq1.Id,response.Origen1,response.Destino1)
 	}
 
 

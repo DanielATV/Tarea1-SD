@@ -20,6 +20,8 @@ type Server struct {
 	qnormal []Paquete
 	SegOrd map[string]string
 	mux sync.Mutex
+	Origen map [string]string
+	Destino map[string]string
 	
 
 }
@@ -76,6 +78,7 @@ func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 		i = "0"
     }
 	var mensaje = []string{asd,in.Id,tipostr,in.Producto,j,in.Origen,in.Destino,i}
+
 	
 
 	//err := writer.Write({asd,in.Id,in.Tipo,in.Producto,in.Valor,in.Origen,in.Destino,0})
@@ -100,6 +103,10 @@ func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 		s.qret = append(s.qret,paquete)
 		
 	}
+
+	s.Origen[in.Id] = in.Origen
+	s.Destino[in.Id] = in.Destino
+	
 	s.mux.Unlock()
 
 	fmt.Println(len(s.qnormal))
@@ -395,6 +402,18 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 		}
 		
 		
+	}
+
+	if c.Flag == 2{
+		c.Origen1 = s.Origen[c.Paq1.Id]
+		c.Destino1 = s.Destino[c.Paq1.Id]
+	
+		c.Origen2 = s.Origen[c.Paq2.Id]
+		c.Destino2 = s.Destino[c.Paq2.Id]
+	} else {
+		c.Origen1 = s.Origen[c.Paq1.Id]
+		c.Destino1 = s.Destino[c.Paq1.Id]
+
 	}
 
 

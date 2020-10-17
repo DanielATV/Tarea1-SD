@@ -64,6 +64,10 @@ message Carga{
   Paquete paq1 = 1;
   Paquete paq2 = 2;
   int32 flag = 3;
+  string origen1= 4;
+  string origen2=5;
+  string destino1= 6;
+  string destino2 = 7;
 
 
 }

@@ -1,10 +1,10 @@
-DE786,19,prioritario,15,1,Rechazado,0
-DE654,18,prioritario,11,1,Rechazado,0
-PF452,13,prioritario,115,3,Rechazado,0
-OF352,14,prioritario,9,0,Rechazado,0
-PF225,10,prioritario,25,0,Entregado,2020-10-16 23:59:13
-PF111,8,prioritario,10,0,Entregado,2020-10-16 23:59:14
-PF654,6,prioritario,50,1,Entregado,2020-10-16 23:59:12
-BE785,5,prioritario,8,0,Entregado,2020-10-16 23:59:11
-BE127,1,prioritario,15,0,Entregado,2020-10-16 23:59:08
-BE666,2,prioritario,8,0,Entregado,2020-10-16 23:59:09
+BE127,prioritario,15,pyme,casa-K,1,2020-10-17 15:50:33
+BE666,prioritario,8,pyme,casa-A,1,0
+PF654,prioritario,50,pyme,casa-B,1,2020-10-17 15:50:35
+BE785,prioritario,8,pyme,casa-E,1,2020-10-17 15:50:36
+PF225,prioritario,25,pyme,casa-P,1,2020-10-17 15:50:37
+PF111,prioritario,10,pyme,casa-N,1,2020-10-17 15:50:38
+PF452,prioritario,115,pyme,casa-I,1,2020-10-17 15:50:39
+OF352,prioritario,9,pyme,casa-C,1,2020-10-17 15:50:40
+DE786,prioritario,15,pyme,casa-Z,2,2020-10-17 15:50:43
+DE654,prioritario,11,pyme,casa-V,1,2020-10-17 15:50:42
