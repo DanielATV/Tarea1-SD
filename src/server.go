@@ -11,12 +11,15 @@ import (
 
 func main() {
 
-	fmt.Println("Go gRPC Beginners Tutorial!")
+	fmt.Println("Servidor iniciado!")
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 9000))
+	
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+
+	
 
 	s := chat.Server{Asd: 0, SegOrd: make(map[string]string), Origen: make(map[string]string), Destino: make(map[string]string)}
 	//s.SegOrd= make(map[string]string)
@@ -30,4 +33,6 @@ func main() {
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %s", err)
 	}
+
+	
 }

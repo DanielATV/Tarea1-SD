@@ -23,36 +23,48 @@ import (
 
 
 func main() {
+
+	var demora int
+	var esperar int
+	//Tiempo de entrega
+	fmt.Println("Indique el tiempo de entrega de los paquetes (segundos)")
+	
+	fmt.Scanln(&demora)
+
+	//Espera por segundo paquete
+	fmt.Println("Indique el tiempo de espera por un segundo paquete (segundos)")	
+	fmt.Scanln(&esperar) 
+
+
 	var wg sync.WaitGroup
 	wg.Add(3)
 
-	go camion(&wg,"1","retail")
-	go camion(&wg,"2","retail")
-	go camion(&wg,"3","normal")
+	go camion(&wg,"1","retail",esperar,demora)
+	go camion(&wg,"2","retail",esperar,demora)
+	go camion(&wg,"3","normal",esperar,demora)
 	wg.Wait()
 
 }	
 
 	
 
-func camion(wg *sync.WaitGroup, id string,tipo string ){
+func camion(wg *sync.WaitGroup, id string,tipo string, espera int, demora int ){
 	defer wg.Done()
 
-	//preparar archivo
 
-	//cambiar para for infinito
 
 	nombre := "camion" + id + ".csv"
-	file, err := os.OpenFile(nombre, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	checkError("Cannot create file", err)
-	defer file.Close()
+	
+	
 
-	writer := csv.NewWriter(file)
-	defer writer.Flush()
+	for {
 
-	for  i := 0; i < 5; i++{
+
+		//Conexion a logistica
 		var conn *grpc.ClientConn
+		
 		conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+		//conn, err := grpc.Dial("dist04:9000", grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("did not connect: %s", err)
 		}
@@ -61,13 +73,14 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 		c := chat.NewChatServiceClient(conn)
 
 
-		//solicita la carga
-		response, err := c.LlegoCamion(context.Background(), &chat.Camion{Id: id, Tipo: tipo})
+		//Solicita la carga
+		response, err := c.LlegoCamion(context.Background(), &chat.Camion{Id: id, Tipo: tipo, Espera: int32(espera)})
 		if err != nil {
 			log.Fatalf("Error when calling SayHello: %s", err)
 		}
 
-		
+	
+
 		
 		ent1 :=0
 		ent2 :=0
@@ -81,6 +94,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 
 		flag := response.Flag
 
+		//Asgina la ganancia correspondiente
 		if flag == 2 {
 			if response.Paq1.Tipo == "retail"{
 				cost1 = float32(response.Paq1.Valor)
@@ -98,6 +112,8 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 		var dest2 string
 		var origen1 string
 		var origen2 string
+
+		//Determina el paquete que se entrega primero
 
 		if flag == 2 {
 
@@ -143,7 +159,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 			}
 		}
 
-		//Entregar y ver los re-intentos
+		//Entrega y logica de reintentos
 		paquetesent := 0
 		try1 := int32(1)
 		try2 :=int32(1)
@@ -157,7 +173,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 			//Paquete 1
 			if (ent1 == 0){
 				porcentaje = rand.Intn(100)
-				time.Sleep(1 * time.Second) 
+				time.Sleep(time.Duration(demora) * time.Second)
 				//fmt.Println("intento en paquete 1 con probabilidad ",porcentaje)
 				if (porcentaje <=80){ //paquete entregado
 					ent1 = 1
@@ -198,7 +214,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 			//Paquete 2
 			if (ent2 == 0){
 				porcentaje = rand.Intn(100)
-				time.Sleep(1 * time.Second) 
+				time.Sleep(time.Duration(demora) * time.Second)
 				//fmt.Println("intento en paquete 2 con probabilidad ",porcentaje)
 				if (porcentaje <=80){ //paquete entregado
 					ent2 = 1
@@ -237,7 +253,7 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 	
 		}
 
-		//escrita del archivo
+		//Escritura del archivo
 		var aux string
 		var aux2 string
 		// id id-seg tipo valor intentos estado
@@ -246,70 +262,88 @@ func camion(wg *sync.WaitGroup, id string,tipo string ){
 			aux = strconv.Itoa(int(primero.Valor))
 			aux2 = strconv.Itoa(int(primero.Intentos))
 			var slc1 = []string{primero.Id,primero.Tipo,aux,origen1,dest1,aux2, entime1}
-			fmt.Println(slc1)
+			//fmt.Println(slc1)
 			//var slc1 = []string{primero.Id,primero.Idseg,primero.Tipo,aux,aux2,primero.Estado, entime1}
 
-			err := writer.Write(slc1)
-			checkError("Cannot write to file", err)
+			savearchivo(nombre, slc1)
 			aux = strconv.Itoa(int(segundo.Valor))
 			aux2 = strconv.Itoa(int(segundo.Intentos))
 			//var slc2 = []string{segundo.Id,segundo.Idseg,segundo.Tipo,aux,aux2,segundo.Estado, entime2 }
 			var slc2 = []string{segundo.Id,segundo.Tipo,aux,origen2,dest2,aux2, entime2}
-			err2 := writer.Write(slc2)
-			checkError("Cannot write to file", err2)
+			savearchivo(nombre, slc2)
 
 			infoPaq1:= &chat.Info{Id: primero.Id, 
 				Tipo: primero.Tipo,
 				Estado: primero.Estado,
 				Intentos: primero.Intentos,
-				Valor: primero.Valor}
+				Valor: primero.Valor,
+				Idseg: primero.Idseg}
 		
 			infoPaq2:= &chat.Info{Id: segundo.Id,
 				Tipo: segundo.Tipo,
 				Estado: segundo.Estado,
 				Intentos: segundo.Intentos,
-				Valor: segundo.Valor}
+				Valor: segundo.Valor,
+				Idseg: segundo.Idseg}
 				
 
 			entrega := &chat.Entrega{Num: int32(flag), Inf1: infoPaq1, Inf2: infoPaq2}
 
+
+			//Informa a logistica el resultado de la entrega
 			respuesta, err := c.EntregaCamion(context.Background(), entrega)
 			if err != nil {
 				log.Fatalf("Error when calling SayHello: %s", err)
 			}
 
-			fmt.Println(respuesta)
+			fmt.Println("Logistica envio un mensaje: ",respuesta.Ack)
 
 		}else{
-			fmt.Println(primero)
+			//fmt.Println(primero)
 			aux = strconv.Itoa(int(primero.Valor))
 			aux2 = strconv.Itoa(int(primero.Intentos))
 			//var slc1 = []string{primero.Id,primero.Idseg,primero.Tipo,aux,aux2,primero.Estado, entime1}
 			var slc1 = []string{primero.Id,primero.Tipo,aux,origen1,dest1,aux2, entime1}
-			err := writer.Write(slc1)
-			checkError("Cannot write to file", err)
+			savearchivo(nombre, slc1)
 
 			infoPaq1:= &chat.Info{Id: primero.Id, 
 				Tipo: primero.Tipo,
 				Estado: primero.Estado,
 				Intentos: primero.Intentos,
-				Valor: primero.Valor}
+				Valor: primero.Valor,
+				Idseg: primero.Idseg}
 			
 			entrega := &chat.Entrega{Num: int32(flag), Inf1: infoPaq1}
 
+
+			//Informa a logistica el resultado de la entrega
 			respuesta, err := c.EntregaCamion(context.Background(), entrega)
 			if err != nil {
 				log.Fatalf("Error when calling SayHello: %s", err)
 			}
 
-			fmt.Println(respuesta)
+			fmt.Println("Logistica envio un mensaje: ",respuesta.Ack)
 		}
 
 		
 		//log.Printf("Id: %s, Origen: %s, Destino: %s", response.Paq1.Id,response.Origen1,response.Destino1)
+		
 	}
 
 
+}
+
+
+
+func savearchivo(nombre string, escritura []string) {
+	csvfile, err := os.OpenFile(nombre, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatalf("failed creating file: %s", err)
+	}
+	csvwriter := csv.NewWriter(csvfile)
+	csvwriter.Write(escritura)
+	csvwriter.Flush()
+	csvfile.Close()
 }
 
 func checkError(message string, err error) {

@@ -18,7 +18,6 @@ import (
 )
 
 //Estructura Json
-
 type Datos struct {
 
 	Id string
@@ -35,6 +34,8 @@ func failOnError(err error, msg string) {
 	}
 }
 
+
+// Servidos con las variables que maneja
 type Server struct {
 	Asd int
 	qret []Paquete
@@ -55,13 +56,15 @@ func checkError(message string, err error) {
 }
 
 
-
+//Funcion de referencia
 func (s *Server) SayHello(ctx context.Context, in *Message) (*Message, error) {
 	log.Printf("Receive message body from client: %s", in.Body)
 
 	return &Message{Body: "Hello From the Server!"}, nil
 }
 
+
+//Servicio que recibe una orden y entrega un codigo de seguimiento
 func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 
 	
@@ -69,6 +72,8 @@ func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 
 	currentTime := time.Now()
 	asd := currentTime.Format("2006-01-02 15:04:05")
+
+	//Manejo de archivo
 
 	file, err := os.OpenFile("registroPedidos.csv", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
     checkError("Cannot create file", err)
@@ -85,6 +90,8 @@ func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 	tipo := in.Tipo
 	var tipostr string
 	var i string
+	
+
 
 	switch tipo {
     case 0:
@@ -98,20 +105,24 @@ func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
     case 2:
 		tipostr = "retail"
 		i = "0"
+		
+		
     }
 	var mensaje = []string{asd,in.Id,tipostr,in.Producto,j,in.Origen,in.Destino,i}
-
+	
 	
 
 	//err := writer.Write({asd,in.Id,in.Tipo,in.Producto,in.Valor,in.Origen,in.Destino,0})
 	err2 := writer.Write(mensaje)
     checkError("Cannot write to file", err2)
 
-	//crear paquete
+	//Creacion del paquete
 
 	paquete := Paquete{Id: in.Id, Estado: "En bodega",Idseg: i,Intentos: 0,Valor: int32(in.Valor),Tipo: tipostr}
-	log.Printf("El destino del pedido %s es %s",in.Id, in.Destino)
+	log.Printf("Se recibio el pedido %s",in.Id)
 
+
+	//Añade los paquetes a la cola que corresponde
 	s.mux.Lock()
 	switch tipostr {
 	case "normal":
@@ -121,6 +132,7 @@ func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 	case "prioritario":
 		s.qprio = append(s.qprio,paquete)
 		s.SegOrd[i] = "En bodega"
+
 	case "retail":
 		s.qret = append(s.qret,paquete)
 		
@@ -135,14 +147,14 @@ func (s *Server) HacerPedido(ctx context.Context, in *Orden) (*Codigo, error) {
 	//fmt.Println(len(s.qprio))
 	//fmt.Println(len(s.qret))
 
-	//falta arreglar el retorno
-	return &Codigo{Idcompra: "1234"}, nil
+	
+	return &Codigo{Idcompra: i}, nil
 }
 
+// Servicio que le asigna la carga correspondiente al camion cuando "llega"
 func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 
-	//agregar origen/destino a carga
-
+	
 	log.Printf("Llego el camion: %s", in.Id)
 
 	tipocam := in.Tipo
@@ -157,24 +169,26 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 		flag := false
 
 		for carga != 2{
-			//parte con 1 paquete
+			//Parte con 1 paquete
 			if flag == true{
 				break
 			}
 
-			//termina de esperar
+			//Espera un segundo paquete
 			if wait == true {
 
-				//sleep
-				time.Sleep(10 * time.Second) 
+				time.Sleep(time.Duration(in.Espera) * time.Second)
 				flag = true
 			}
 
+			//Hay paquetes en la cola prioritaria
+			s.mux.Lock()
 			if len(s.qprio) > 0{
+				//Asigma 2 paquetes y parte el camion
 				if len(s.qprio) >=2 && carga == 0{
 
-
-					s.mux.Lock()
+					log.Printf("Checkpoint 1")
+					
 
 					packet1 := s.qprio[0]
 					s.qprio = s.qprio[1:]
@@ -184,34 +198,39 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 					s.SegOrd[packet1.Idseg] = "En camino"
 					s.SegOrd[packet2.Idseg] = "En camino"
 
-					s.mux.Unlock()
+					
 
 					c.Paq1 = &packet1
 					c.Paq2 = &packet2
 					c.Flag = 2
-
+					s.mux.Unlock()
 					break
-
+				//Asigna solo un paquete y espera
 				} else {
 					if carga == 1{
-						s.mux.Lock()
+						log.Printf("Checkpoint 2")
+						
 
 						
 						packet2 := s.qprio[0]
 						s.qprio = s.qprio[1:]
 						s.SegOrd[packet2.Idseg] = "En camino"
 
-						s.mux.Unlock()
+						
 
 						c.Paq2 = &packet2
 						c.Flag = 2
 					} else {
-						s.mux.Lock()
+
+						
+						log.Printf("Checkpoint 3")
+						
 						packet1 := s.qprio[0]
+						log.Printf("Checkpoint 3.1")
 						s.qprio = s.qprio[1:]
 						s.SegOrd[packet1.Id] = "En camino"
 
-						s.mux.Unlock()
+						
 
 						c.Paq1 = &packet1
 						c.Flag = 1
@@ -227,11 +246,13 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 				
 				
 				
-
+			//Hay paquetes en la cola normal
 			} else if len(s.qnormal) > 0{
 				if len(s.qnormal) >=2 && carga == 0{
 
-					s.mux.Lock()
+					log.Printf("Checkpoint 4")
+
+					
 
 					packet1 := s.qnormal[0]
 					s.qnormal = s.qnormal[1:]
@@ -241,37 +262,40 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 					s.SegOrd[packet1.Idseg] = "En camino"
 					s.SegOrd[packet2.Idseg] = "En camino"
 
-					s.mux.Unlock()
+					
 
 					c.Paq1 = &packet1
 					c.Paq2 = &packet2
 					c.Flag = 2
-
+					s.mux.Unlock()
 					break
-
+				//Asigna solo un paquete y espera
 				} else {
 					if carga == 1{
 
-						s.mux.Lock()
+
+						log.Printf("Checkpoint 5")
+						
 
 						
 						packet2 := s.qnormal[0]
 						s.qnormal = s.qnormal[1:]
 						
 
-						s.mux.Unlock()
+						
 
 						c.Paq2 = &packet2
 						c.Flag = 2
 
 					} else {
 
-						s.mux.Lock()
+						log.Printf("Checkpoint 6")
+						
 						packet1 := s.qnormal[0]
 						s.qnormal = s.qnormal[1:]
 						
 
-						s.mux.Unlock()
+						
 
 						c.Paq1 = &packet1
 						c.Flag = 1
@@ -284,6 +308,7 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 
 
 			}
+			s.mux.Unlock()
 
 		}
 	case "retail":
@@ -294,53 +319,54 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 
 		for carga != 2{
 
-			//parte con 1 paquete
+			//Parte con 1 paquete
 			if flag == true{
 				break
 			}
 
-			//termina de esperar
+			//Espera un segundo paquete
 			if wait == true {
 
-				//sleep
-				time.Sleep(8 * time.Second) 
+				
+				time.Sleep(time.Duration(in.Espera) * time.Second)
 				flag = true
 			}
 
 
-			// hay paquete en la cola retail
+			//Hay paquetes en la cola retail
+			s.mux.Lock()
+
 			if len(s.qret) > 0{
-				//revisa camion vacio e inclute 2 paquetes
+				
 				if len(s.qret) >=2 && carga == 0{
 				
 
-					s.mux.Lock()
-
+					
 					packet1 := s.qret[0]
 					s.qret = s.qret[1:]
 					packet2 := s.qret[0]
 					s.qret = s.qret[1:]
 
-					s.mux.Unlock()
-
+					
 					c.Paq1 = &packet1
 					c.Paq2 = &packet2
 					c.Flag = 2
 
 					break
+					s.mux.Unlock()
 
 
 				} else {
 
 					if carga == 1{
-						s.mux.Lock()
+					
 
 						
 						packet2 := s.qret[0]
 						s.qret = s.qret[1:]
 						
 
-						s.mux.Unlock()
+					
 
 						c.Paq2 = &packet2
 						c.Flag = 2
@@ -348,12 +374,12 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 
 					} else {
 
-						s.mux.Lock()
+						
 						packet1 := s.qret[0]
 						s.qret = s.qret[1:]
 						
 
-						s.mux.Unlock()
+						
 
 						c.Paq1 = &packet1
 						c.Flag = 1
@@ -364,12 +390,13 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 					wait = true
 
 				}
-				
+			//Hay paquetes en la cola prioritaria
 			} else if len(s.qprio) > 0{
+				//Asigma 2 paquetes y parte el camion
 				if len(s.qprio) >=2 && carga == 0{
 
 
-					s.mux.Lock()
+					
 
 					packet1 := s.qprio[0]
 					s.qprio = s.qprio[1:]
@@ -379,24 +406,26 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 					s.SegOrd[packet1.Idseg] = "En camino"
 					s.SegOrd[packet2.Idseg] = "En camino"
 
-					s.mux.Unlock()
+					
 
 					c.Paq1 = &packet1
 					c.Paq2 = &packet2
 					c.Flag = 2
+					s.mux.Unlock()
+
 					break
 
 				} else {
 
 					if carga ==1 {
-						s.mux.Lock()
+						
 
 						
 						packet2 := s.qprio[0]
 						s.qprio = s.qprio[1:]
 						s.SegOrd[packet2.Idseg] = "En camino"
 
-						s.mux.Unlock()
+						
 
 						c.Paq2 = &packet2
 						c.Flag = 2
@@ -404,12 +433,12 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 
 					} else {
 
-						s.mux.Lock()
+						
 						packet1 := s.qprio[0]
 						s.qprio = s.qprio[1:]
 						s.SegOrd[packet1.Id] = "En camino"
 
-						s.mux.Unlock()
+						
 
 						c.Paq1 = &packet1
 						c.Flag = 1
@@ -421,10 +450,11 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 
 				}
 			}
-
+			s.mux.Unlock()
 		}
 		
 		
+
 	}
 
 	if c.Flag == 2{
@@ -443,11 +473,14 @@ func (s *Server)LlegoCamion(ctx context.Context, in *Camion) (*Carga, error) {
 	//d:= &Carga{Paq1: &Paquete{ Id: "asd"},
 	//Paq2: &Paquete{Id : "qwerty"},
 	//Flag: 0}
+
+	log.Printf("El camion %s partio", in.Id)
 	return c, nil
 
 }
 
 
+//Servicio que actualiza el estado de las entregas del camion y lo notifica a financiero
 func (s *Server)EntregaCamion(ctx context.Context, in *Entrega) (*Respuesta, error){
 
 
@@ -457,12 +490,11 @@ func (s *Server)EntregaCamion(ctx context.Context, in *Entrega) (*Respuesta, err
 	//user := &User{Name: "Frank", Numero: 2}
 	//b, _ := json.Marshal(user)
 	
-	
-	//cambiar el dic con el estado del paq como recibido o no recibido
     
-	
 
+	//Conecion a fiananciero por rabbitMQ
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	//conn, err := amqp.Dial("amqp://admin:admin@dist01:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
@@ -484,6 +516,7 @@ func (s *Server)EntregaCamion(ctx context.Context, in *Entrega) (*Respuesta, err
 
 	failOnError(err, "Failed to declare a queue")
 
+	//Publica dos mensajes a la cola si entrego 2 paquetes
 	if in.Num == 2{
 		
 		load1 := &Datos{Id: in.Inf1.Id,
@@ -491,6 +524,8 @@ func (s *Server)EntregaCamion(ctx context.Context, in *Entrega) (*Respuesta, err
 		Estado:in.Inf1.Estado,
 		Valor:int(in.Inf1.Valor),
 		Intentos:int(in.Inf1.Intentos)}
+
+		
 
 		ld1, _ := json.Marshal(load1)
 
@@ -525,7 +560,15 @@ func (s *Server)EntregaCamion(ctx context.Context, in *Entrega) (*Respuesta, err
 
 		failOnError(err, "Failed to publish a message")
 
+		//Actualiza el estado
+		s.mux.Lock()
 
+		s.SegOrd[in.Inf1.Idseg] = in.Inf1.Estado
+		s.SegOrd[in.Inf2.Idseg] = in.Inf2.Estado
+
+		s.mux.Unlock()
+
+	//Publica 1 mensaje a la cola si entrego 1 paquete
 	} else{
 
 		load1 := &Datos{Id: in.Inf1.Id,
@@ -548,6 +591,12 @@ func (s *Server)EntregaCamion(ctx context.Context, in *Entrega) (*Respuesta, err
 
 		failOnError(err, "Failed to publish a message")
 
+		//Actualiza el estado
+		s.mux.Lock()
+		s.SegOrd[in.Inf1.Idseg] = in.Inf1.Estado
+
+		s.mux.Unlock()
+
 
 	}
 
@@ -557,4 +606,10 @@ func (s *Server)EntregaCamion(ctx context.Context, in *Entrega) (*Respuesta, err
 	
 	return &Respuesta{Ack: "Datos recibidos"}, nil
 
+}
+
+func (s *Server) Estado(ctx context.Context, in *Codigo) (*EstOrden, error) {
+	//log.Printf("Receive message body from client: %s", in.Idcompra)
+
+	return &EstOrden{Estado: s.SegOrd[in.Idcompra]}, nil
 }

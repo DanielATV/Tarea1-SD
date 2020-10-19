@@ -34,7 +34,7 @@ func main() {
 	fmt.Println("Indique el tiempo entre envios(segundos)")	
 	fmt.Scanln(&esperar) 
 
-	//Lectura de archivo
+	
 
 	if eleccion == 0 {
 		csvReaderRow(esperar,"pymes.csv",0)
@@ -49,7 +49,15 @@ func main() {
 }
 
 func csvReaderRow(timer int,nombre string, flag int) {
+
+	cont:= 0
+	var codseg string 
+	var idaux string
+
+	
+
 	var conn *grpc.ClientConn
+	//conn, err := grpc.Dial("dist04:9000", grpc.WithInsecure())
 	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %s", err)
@@ -109,10 +117,37 @@ func csvReaderRow(timer int,nombre string, flag int) {
 		if err != nil {
 			log.Fatalf("Error when calling SayHello: %s", err)
 		}
-		log.Printf("Response from server: %s", response.Idcompra)
+		log.Printf("Se entrego la orden: %s", record[0])
 		//log.Printf("Response from server: %s", response.Body)
 
+
+		//Pregunta el estado del pedido cada 3 ordenes si es cliente tipo  pyme
+		if (flag == 0 ){
+
+			if cont == 0{
+
+				codseg = response.Idcompra
+				idaux = record[0]
+
+			}
+
+			cont = cont +1
+
+			if cont == 3{
+				cont = 0
+				//Pide el estado de un pedido
+				respuesta, _ := c. Estado(context.Background(),&chat.Codigo{Idcompra: codseg})
+
+				log.Printf("La orden %s se encuentra %s", idaux, respuesta.Estado)
+			}
+			
+
+
+		}
+
 		//fmt.Printf("Row %d : %v \n", i, record[4])
+
+		//Espera para hacer la siguiente orden
 		time.Sleep(time.Duration(timer) * time.Second)
 		//casa = string(record[4])
 		//fmt.Printf("%s \n",casa)

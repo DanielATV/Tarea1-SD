@@ -54,6 +54,7 @@ message Paquete {
 message Camion{
   string id =1;
   string tipo =2;
+  int32 espera =3;
   
 }
 
@@ -80,6 +81,7 @@ message Info{
   string estado =3;
   int32 intentos =4;
   int32 valor=5;
+  string idseg = 6;
 
 
 }
@@ -101,10 +103,7 @@ service ChatService {
   rpc HacerPedido( Orden) returns (Codigo){}
 
   // El cliente solicita el estado de su pedido
-  //rpc Estado( Codigo) returns (EstOrden){}
-
-  // Seguimiento de la orden
-  //rpc Seguimiento(stream Asigcam) returns (stream Rescam){}
+  rpc Estado( Codigo) returns (EstOrden){}
 
   // LLega al camion y pide carga
   rpc LlegoCamion(Camion) returns (Carga){}

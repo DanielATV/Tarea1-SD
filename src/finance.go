@@ -44,7 +44,8 @@ func main() {
 	
 	flag := 0
 	
-	
+
+	//conn, err := amqp.Dial("amqp://admin:admin@dist01:5672/")
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
@@ -91,6 +92,8 @@ func main() {
 			
 			json.Unmarshal(d.Body, &res)
 
+			
+
 			file, err := os.OpenFile("RegistroFinanciero.csv", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 			checkError("Cannot create file", err)
 			
@@ -99,7 +102,7 @@ func main() {
 			
 
 			
-
+			//Determina las gancias y perdidas del paquete
 			switch res.Tipo{
 			case "retail":
 				gananciaPaq = res.Valor
@@ -168,6 +171,8 @@ func main() {
 			writer.Flush()
 			file.Close()
 
+			fmt.Println("Las ganancias totales son de: ", gananciasTot)
+			fmt.Println("Las perdidas totales son de: ", perdidasTot)
 			fmt.Println("El balance final es: ", balance)
 			
 			
