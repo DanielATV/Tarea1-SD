@@ -10,7 +10,7 @@ Daniel Toro 201673595-K
 ### Instrucciones de uso
 
 Para ejecutar la tarea es necesario encontrarse en la carpeta src y ejecutar make build en cada una de 
-las maquinas vituales. Luego, en la VM dist01 ejecutar make finanza, en la VM dist04 ejecutar make servidor. Finalmente, make camion en la VM dist02 y make client en la VM dist03.
+las maquinas vituales. Luego, en la VM dist01 ejecutar make finanza, en la VM dist04 ejecutar make servidor. Finalmente, make camion en la VM dist02 y make cliente en la VM dist03.
 
 #### Cliente
 
