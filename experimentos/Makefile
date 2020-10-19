@@ -2,7 +2,7 @@ build:
 	go build asd.go
 	go build hilos.go
 
-asd:
+qwerty:
 	./asd
 gonzalo:
 	./hilos

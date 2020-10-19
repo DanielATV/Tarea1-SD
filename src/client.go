@@ -57,8 +57,8 @@ func csvReaderRow(timer int,nombre string, flag int) {
 	
 
 	var conn *grpc.ClientConn
-	//conn, err := grpc.Dial("dist04:9000", grpc.WithInsecure())
-	conn, err := grpc.Dial(":9000", grpc.WithInsecure())
+	conn, err := grpc.Dial("dist04:9000", grpc.WithInsecure())
+	//conn, err := grpc.Dial(":9000", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %s", err)
 	}

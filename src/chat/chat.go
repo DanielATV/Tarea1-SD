@@ -493,8 +493,8 @@ func (s *Server)EntregaCamion(ctx context.Context, in *Entrega) (*Respuesta, err
     
 
 	//Conecion a fiananciero por rabbitMQ
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-	//conn, err := amqp.Dial("amqp://admin:admin@dist01:5672/")
+	//conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://admin:admin@dist01:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 

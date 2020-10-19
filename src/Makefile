@@ -4,11 +4,14 @@ build:
 	go build truck.go
 	go build client.go
 
-server:
+servidor:
 	./server
-finance:
+
+finanza:
 	./finance
-truck:
+
+camion:
 	./truck
-client:
+
+cliente:
 	./client
